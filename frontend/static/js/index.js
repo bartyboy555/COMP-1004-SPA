@@ -1,4 +1,4 @@
-import { loadView} from "./views/load_view.JS";
+import { loadView } from "./views/load_view.js";
 
 const navigateTo = url => {
     history.pushState(null, null, url);
@@ -8,7 +8,7 @@ const navigateTo = url => {
 const router = async () => {
     const routes = [
         { path: "/", view: "main_menu"},
-        { path: "/startGame", view: "start_game"},
+        { path: "/startGame", view: "game"},
         { path: "/setDifficulty", view: "set_difficulty"},
         { path: "/loadPlayerData", view: "load_player_data"},
         {path: "/gameDetails", view: "game_details"},
@@ -23,7 +23,7 @@ const router = async () => {
     });
 
     // store match
-    let match = potentialMatches.find(potentialMatches => potentialMatches.isMatch);
+    let match = potentialMatches.find(m => m.isMatch);
 
     if (!match) {
         match = {
@@ -32,8 +32,8 @@ const router = async () => {
         };
     }
 
-    document.querySelector("#app").innerHTML = 
     await loadView(match.route.view);
+
 }
 
 window.addEventListener('popstate', router);

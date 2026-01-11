@@ -83,12 +83,14 @@ const keys = {
     }
 }
 
-let lastkey = ''
+let lastkey = '';
 
 
 // 2d array setting map spaces
 const map = [
     ['#', '#', '#', '#', '#', '#', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', '#', ' ', '#', ' ', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', '#'],
     ['#', ' ', '#', ' ', '#', ' ', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', '#'],
@@ -99,7 +101,7 @@ const map = [
 map.forEach((row, i) => {
     row.forEach((symbol, j) => {
         switch (symbol) {
-            // if position is - in map set it to a boundary
+            // if position is # in map set it to a boundary
             case '#':
                 boundaries.push(
                     new Boundary({
@@ -141,14 +143,97 @@ function animate() {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
 
     // if statements for player movement based on wasd
+    // if w key is pressed
     if (keys.w.pressed && lastkey == 'w') {
-        player.velocity.y = -5;
+    // and if any boundary is colided with
+    // loop for each boundary
+    for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+            // circle collision detection function
+            circleColidesWithRectangle({
+            circle: {...player, velocity: {
+                x: 0,
+                y: -5
+            }},
+            rectangle: boundary
+        })
+        ) {
+            // set player velocity on the y axis to 0
+            player.velocity.y = 0;
+            break
+        } else {
+            // else statement to reset player speed once the colision stops prevents player getting stuck in gaps
+            // else set velocity to negative to push player up
+            player.velocity.y = -5
+        }
+    }
     } else if (keys.a.pressed && lastkey == 'a') {
-        player.velocity.x = -5;
+        for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+            // circle collision detection function
+            circleColidesWithRectangle({
+            circle: {...player, velocity: {
+                x: -5,
+                y: 0
+            }},
+            rectangle: boundary
+        })
+        ) {
+            // set player velocity on the y axis to 0
+            player.velocity.x = 0;
+            break
+        } else {
+            // else statement to reset player speed once the colision stops prevents player getting stuck in gaps
+            // else set velocity to negative to push player up
+            player.velocity.x = -5
+        }
+    }
     } else if (keys.s.pressed && lastkey == 's') {
-        player.velocity.y = 5;
+        for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+            // circle collision detection function
+            circleColidesWithRectangle({
+            circle: {...player, velocity: {
+                x: 0,
+                y: 5
+            }},
+            rectangle: boundary
+        })
+        ) {
+            // set player velocity on the y axis to 0
+            player.velocity.y = 0;
+            break
+        } else {
+            // else statement to reset player speed once the colision stops prevents player getting stuck in gaps
+            // else set velocity to positive to push player down
+            player.velocity.y = 5
+        }
+    }
     } else if (keys.d.pressed && lastkey == 'd') {
-        player.velocity.x = 5;
+        for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+            // circle collision detection function
+            circleColidesWithRectangle({
+            circle: {...player, velocity: {
+                x: 5,
+                y: 0
+            }},
+            rectangle: boundary
+        })
+        ) {
+            // set player velocity on the y axis to 0
+            player.velocity.x = 0;
+            break
+        } else {
+            // else statement to reset player speed once the colision stops prevents player getting stuck in gaps
+            // else set velocity to negative to push player up
+            player.velocity.x = 5
+        }
+    }
     }
 
     // loop for each boundary
@@ -189,7 +274,7 @@ boundaries.forEach((Boundary) => {
 // draw and update player on canvas
 player.update();
 
-// evenet listener to listen for player movement keys wasd being pressed
+// event listener to listen for player movement keys wasd being pressed
 addEventListener('keydown', ({ key }) => {
     switch (key) {
         case 'w':

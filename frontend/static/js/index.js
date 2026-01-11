@@ -5,6 +5,7 @@ const navigateTo = url => {
     router();
 }
 
+// SPA page router
 const router = async () => {
     const routes = [
         { path: "/", view: "main_menu"},

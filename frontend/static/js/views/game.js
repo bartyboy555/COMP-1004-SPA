@@ -2,6 +2,8 @@
 const canvas = document.querySelector('canvas');
 const canvasContext = canvas.getContext('2d');
 
+const scoreElement = document.querySelector('#scoreElement');
+
 // setting canvas dimensions
 canvas.width = innerWidth;
 canvas.height = innerHeight;
@@ -53,8 +55,31 @@ class Player {
     }
 }
 
+// pellet class
+class Pellet {
+    constructor({ position }) {
+        this.position = position;
+        // pellet radius
+        this.radius = 3;
+    }
+
+    // drawing circle to look like pacman
+    draw() {
+        canvasContext.beginPath();
+        // circle arc
+        canvasContext.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        // player colour
+        canvasContext.fillStyle = 'white';
+        canvasContext.fill()
+        canvasContext.closePath;
+    }
+
+    
+}
+
 
 // creating new instances for game
+const pellets = [];
 const boundaries = [];
 const player  = new Player({
     position: {
@@ -84,25 +109,38 @@ const keys = {
 }
 
 let lastkey = '';
+let score = 0;
 
 
 // 2d array setting map spaces
 const map = [
-    ['#', '#', '#', '#', '#', '#', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', '#', ' ', '#', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', '#', ' ', '#', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', '#', '#', '#', '#', '#', '#'],
+    ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', ' ', '#', '#', '#', ' ', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.',  '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
 ]
 
-// loop for 2d map array to set map assests in canvaS
+// loop for 2d map array to set map assests in canvas
 map.forEach((row, i) => {
     row.forEach((symbol, j) => {
         switch (symbol) {
+            // boundary case
             // if position is # in map set it to a boundary
             case '#':
+                // store in boundaries array
                 boundaries.push(
                     new Boundary({
                         position: {
@@ -112,6 +150,22 @@ map.forEach((row, i) => {
                     })
                 )
                 break
+            
+            // pellet case
+            // if position is a . in map set it to a pellet
+            case '.':
+                // store in pellets array
+                pellets.push(
+                    new Pellet({
+                        position: {
+                            // set position with the width/height divided by 2 so asset is in center of box when drawn
+                            x: Boundary.width * j + Boundary.width / 2,
+                            y: Boundary.height * i + Boundary.height / 2
+                        }
+                    })
+                )
+                break
+
         }
     })
 })
@@ -236,6 +290,32 @@ function animate() {
     }
     }
 
+    // loop through each of the pellets in the array
+    // in order to not update pellets that haven't been removed
+    // prevents pellet flashing bug
+    for (let i = pellets.length - 1; 0 <= i; i--) {
+        const pellet = pellets[i]
+         // draw pellet
+        pellet.draw()
+
+        // collision detection with player
+        // if player collides with pellet
+        if (Math.hypot(
+            pellet.position.x - player.position.x,
+            pellet.position.y - player.position.y
+        ) <
+        pellet.radius + player.radius
+    ) {
+        //console.log("player is coliding with pellet")
+        // add to score
+        score += 1;
+        // update html element
+        scoreElement.innerHTML = score;
+        // remove pellet
+        pellets.splice(i, 1)
+    }
+    }
+
     // loop for each boundary
     boundaries.forEach((boundary) => {
         // draw boundaries
@@ -248,7 +328,7 @@ function animate() {
                 rectangle: boundary
             })
         ) {
-            console.log("we are coliding!")
+            //console.log("we are coliding!")
             // stops player moving if colided with boundary
             player.velocity.x = 0;
             player.velocity.y = 0;

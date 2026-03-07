@@ -28,6 +28,8 @@ class Boundary {
     }
 }
 
+
+
 // player class
 class Player {
     constructor({ position, velocity }) {
@@ -35,6 +37,8 @@ class Player {
         this.velocity = velocity;
         // player radius
         this.radius = 15;
+        // player speed
+        this.speed = 2;
     }
 
     // drawing circle to look like pacman
@@ -53,6 +57,8 @@ class Player {
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
     }
+
+    
 }
 
 // pellet class
@@ -208,7 +214,7 @@ function animate() {
             circleColidesWithRectangle({
             circle: {...player, velocity: {
                 x: 0,
-                y: -5
+                y: -player.speed
             }},
             rectangle: boundary
         })
@@ -219,7 +225,7 @@ function animate() {
         } else {
             // else statement to reset player speed once the colision stops prevents player getting stuck in gaps
             // else set velocity to negative to push player up
-            player.velocity.y = -5
+            player.velocity.y = -player.speed
         }
     }
     } else if (keys.a.pressed && lastkey == 'a') {
@@ -229,7 +235,7 @@ function animate() {
             // circle collision detection function
             circleColidesWithRectangle({
             circle: {...player, velocity: {
-                x: -5,
+                x: -player.speed,
                 y: 0
             }},
             rectangle: boundary
@@ -241,7 +247,7 @@ function animate() {
         } else {
             // else statement to reset player speed once the colision stops prevents player getting stuck in gaps
             // else set velocity to negative to push player up
-            player.velocity.x = -5
+            player.velocity.x = -player.speed
         }
     }
     } else if (keys.s.pressed && lastkey == 's') {
@@ -252,7 +258,7 @@ function animate() {
             circleColidesWithRectangle({
             circle: {...player, velocity: {
                 x: 0,
-                y: 5
+                y: player.speed
             }},
             rectangle: boundary
         })
@@ -263,7 +269,7 @@ function animate() {
         } else {
             // else statement to reset player speed once the colision stops prevents player getting stuck in gaps
             // else set velocity to positive to push player down
-            player.velocity.y = 5
+            player.velocity.y = player.speed
         }
     }
     } else if (keys.d.pressed && lastkey == 'd') {
@@ -273,7 +279,7 @@ function animate() {
             // circle collision detection function
             circleColidesWithRectangle({
             circle: {...player, velocity: {
-                x: 5,
+                x: player.speed,
                 y: 0
             }},
             rectangle: boundary
@@ -285,7 +291,7 @@ function animate() {
         } else {
             // else statement to reset player speed once the colision stops prevents player getting stuck in gaps
             // else set velocity to negative to push player up
-            player.velocity.x = 5
+            player.velocity.x = player.speed
         }
     }
     }
@@ -338,8 +344,8 @@ function animate() {
     // draw and update player on canvas
     player.update();
     // velocity is set to zero at start of movement loop so player can stop if no button is pressed
-    // player.velocity.x = 0
-    // player.velocity.y = 0;
+    player.velocity.x = 0
+    player.velocity.y = 0;
 
 }
 

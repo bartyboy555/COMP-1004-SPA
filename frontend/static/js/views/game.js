@@ -49,7 +49,7 @@ class Player {
         // player colour
         canvasContext.fillStyle = 'yellow';
         canvasContext.fill()
-        canvasContext.closePath;
+        canvasContext.closePath();
     }
 
     update() {
@@ -61,12 +61,45 @@ class Player {
     
 }
 
+
+// pacman tail class
+class TailSegment {
+    constructor ({ position }) {
+        this.position = position;
+        // tail radius
+        this.radius = 15;
+    }
+
+    // drawing tail segments into yellow circle
+    draw() {
+        canvasContext.beginPath();
+        // circle arc
+        canvasContext.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        // tail colour
+        canvasContext.fillStyle = 'yellow';
+        canvasContext.fill()
+        canvasContext.closePath();
+    }
+
+    update(index) {
+        // gets index for specific tail segment
+        const historyIndex = positionHistory.length -1 -index * 10;
+
+        if (historyIndex >= 0) {
+            this.position.x = positionHistory[historyIndex].x;
+            this.position.y = positionHistory[historyIndex].y;
+        }
+
+        this.draw();
+    }
+}
+
 // pellet class
 class Pellet {
     constructor({ position }) {
         this.position = position;
         // pellet radius
-        this.radius = 3;
+        this.radius = 8;
     }
 
     // drawing circle to look like pacman
@@ -77,12 +110,12 @@ class Pellet {
         // player colour
         canvasContext.fillStyle = 'white';
         canvasContext.fill()
-        canvasContext.closePath;
+        canvasContext.closePath();
     }
 
     
 }
-
+console.log("running 3")
 
 // creating new instances for game
 const pellets = [];
@@ -96,7 +129,13 @@ const player  = new Player({
         x: 0,
         y: 0
     }
+    
 });
+// tail array to store pacman tail segment positions
+const tail = [];
+// array to store player positon history
+const positionHistory = [];
+
 
 
 const keys = {
@@ -122,19 +161,19 @@ let score = 0;
 const map = [
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', ' ', '#', '#', '#', ' ', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.',  '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', '.', ' ', ' ', ' ', ' ', '.', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
 ]
@@ -203,7 +242,7 @@ function animate() {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
 
     // if statements for player movement based on wasd
-    // if w key is pressed
+
     if (keys.w.pressed && lastkey == 'w') {
     // and if any boundary is colided with
     // loop for each boundary
@@ -318,7 +357,17 @@ function animate() {
         // update html element
         scoreElement.innerHTML = score;
         // remove pellet
-        pellets.splice(i, 1)
+        pellets.splice(i, 1);
+
+        tail.push(
+            new TailSegment({
+                position: {
+                    x: positionHistory[positionHistory.length -1].x,
+                    y: positionHistory[positionHistory.length -1].y
+                }
+            })
+        )
+
     }
     }
 
@@ -341,11 +390,37 @@ function animate() {
         }
     })
 
+    //draw tail segments
+    tail.forEach((TailSegment) => {
+
+        TailSegment.draw()
+    })
+
     // draw and update player on canvas
     player.update();
+    // draw and update player tail
+    tail.forEach((TailSegment, index) => {
+        TailSegment.update(index);
+    })
+    
     // velocity is set to zero at start of movement loop so player can stop if no button is pressed
     player.velocity.x = 0
     player.velocity.y = 0;
+
+    // stores players last position in array
+    positionHistory.push({
+        x: player.position.x,
+        y: player.position.y
+    });
+
+    // deletes oldest entry position in array when array gets too big
+    if (positionHistory.length > 300) {
+        positionHistory.shift();
+
+    }
+
+    //console.log(tail);
+    //console.log(positionHistory);
 
 }
 
@@ -359,6 +434,11 @@ boundaries.forEach((Boundary) => {
 
 // draw and update player on canvas
 player.update();
+// draw and update player tail
+tail.forEach((TailSegment, index) => {
+    TailSegment.update(index);
+})
+
 
 // event listener to listen for player movement keys wasd being pressed
 addEventListener('keydown', ({ key }) => {

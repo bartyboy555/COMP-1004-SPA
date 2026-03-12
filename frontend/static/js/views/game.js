@@ -150,6 +150,9 @@ const keys = {
     },
     d: {
         pressed: false
+    },
+    any: {
+        pressed: false
     }
 }
 
@@ -359,6 +362,8 @@ function animate() {
         // remove pellet
         pellets.splice(i, 1);
 
+        // creates a new tail segment when player eats pellet
+        // stores new instance of tail segemnt in array
         tail.push(
             new TailSegment({
                 position: {
@@ -398,16 +403,10 @@ function animate() {
 
     // draw and update player on canvas
     player.update();
-    // draw and update player tail
-    tail.forEach((TailSegment, index) => {
-        TailSegment.update(index);
-    })
-    
-    // velocity is set to zero at start of movement loop so player can stop if no button is pressed
-    player.velocity.x = 0
-    player.velocity.y = 0;
 
-    // stores players last position in array
+if (player.velocity.x !==0 || player.velocity.y !==0) {
+
+        // stores players last position in array
     positionHistory.push({
         x: player.position.x,
         y: player.position.y
@@ -418,6 +417,16 @@ function animate() {
         positionHistory.shift();
 
     }
+    // draw and update player tail
+    tail.forEach((TailSegment, index) => {
+        TailSegment.update(index);
+    })
+    
+}
+
+    // velocity is set to zero at start of movement loop so player can stop if no button is pressed
+    player.velocity.x = 0
+    player.velocity.y = 0;
 
     //console.log(tail);
     //console.log(positionHistory);
@@ -434,28 +443,29 @@ boundaries.forEach((Boundary) => {
 
 // draw and update player on canvas
 player.update();
-// draw and update player tail
-tail.forEach((TailSegment, index) => {
-    TailSegment.update(index);
-})
+
 
 
 // event listener to listen for player movement keys wasd being pressed
 addEventListener('keydown', ({ key }) => {
     switch (key) {
         case 'w':
+            keys.any.pressed = true;
             keys.w.pressed = true;
             lastkey = 'w';
             break
         case 'a':
+            keys.any.pressed = true;
             keys.a.pressed = true;
             lastkey = 'a';
             break
         case 's':
+            keys.any.pressed = true
             keys.s.pressed = true;
             lastkey = 's';
             break
         case 'd':
+            keys.any.pressed = true;
             keys.d.pressed = true;
             lastkey = 'd';
             break
@@ -468,15 +478,19 @@ addEventListener('keydown', ({ key }) => {
 addEventListener('keyup', ({ key }) => {
     switch (key) {
         case 'w':
+            keys.any.pressed = false;
             keys.w.pressed = false;
             break
         case 'a':
+            keys.any.pressed = false;
             keys.a.pressed = false;
             break
         case 's':
+            keys.any.pressed = false;
             keys.s.pressed = false;
             break
         case 'd':
+            keys.any.pressed = false;
             keys.d.pressed = false;
             break
     }

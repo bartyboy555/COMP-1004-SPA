@@ -38,7 +38,7 @@ class Player {
         // player radius
         this.radius = 15;
         // player speed
-        this.speed = 2;
+        this.speed = 3;
     }
 
     // drawing circle to look like pacman
@@ -66,31 +66,60 @@ class Player {
 class TailSegment {
     constructor ({ position }) {
         this.position = position;
+        // tail with and height
+        this.width = 30;
+        this.height = 30;
         // tail radius
-        this.radius = 15;
+        this.radius = 13;
+        this.colour = 'yellow';
     }
 
-    // drawing tail segments into yellow circle
-    draw() {
+    
+    drawTailCenter() {
         canvasContext.beginPath();
-        // circle arc
-        canvasContext.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-        // tail colour
-        canvasContext.fillStyle = 'yellow';
+            // draw middle of tail as a rectangle
+            canvasContext.rect(
+                this.position.x - this.width / 2,
+                this.position.y - this.height / 2,
+                this.width,
+                this.height
+            )
+            
+        canvasContext.fillStyle = this.colour;
         canvasContext.fill()
+        canvasContext.closePath();
+    }
+
+    drawTailEnds() {
+        canvasContext.beginPath();
+        // draw start and end of tail as rounded rectangles
+        // make start and end of tail a rounded rectangle
+        canvasContext.roundRect(
+            this.position.x - this.width / 2,
+            this.position.y - this.height / 2,
+            this.width,
+            this.height,
+            this.height / 2
+        )
+        canvasContext.fillStyle = this.colour;
+        canvasContext.fill();
         canvasContext.closePath();
     }
 
     update(index) {
         // gets index for specific tail segment
-        const historyIndex = positionHistory.length -1 -index * 10;
+        const historyIndex = positionHistory.length -1 -index * 6;
 
         if (historyIndex >= 0) {
             this.position.x = positionHistory[historyIndex].x;
             this.position.y = positionHistory[historyIndex].y;
         }
 
-        this.draw();
+        if (index === 0 || index === tail.length -1) {
+            this.drawTailEnds();
+        } else {
+            this.drawTailCenter();
+        }
     }
 }
 
@@ -166,9 +195,9 @@ const map = [
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', ' ', '#'],
+    ['#', ' ', '.', ' ', ' ', ' ', ' ', ' ', '.', ' ', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
@@ -396,14 +425,18 @@ function animate() {
     })
 
     //draw tail segments
-    tail.forEach((TailSegment) => {
-
-        TailSegment.draw()
+    tail.forEach((TailSegment, index) => {
+        if (index === 0 || index === tail.length -1) {
+            TailSegment.drawTailEnds();
+        } else {
+            TailSegment.drawTailCenter();
+        }
     })
 
     // draw and update player on canvas
     player.update();
 
+// updates tail position based on last player position when player is moving
 if (player.velocity.x !==0 || player.velocity.y !==0) {
 
         // stores players last position in array

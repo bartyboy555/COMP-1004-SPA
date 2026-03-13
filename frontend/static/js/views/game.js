@@ -53,7 +53,6 @@ class Player {
     }
 
     update() {
-        this.draw();
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
     }
@@ -67,8 +66,8 @@ class TailSegment {
     constructor ({ position }) {
         this.position = position;
         // tail with and height
-        this.width = 30;
-        this.height = 30;
+        this.width = 20;
+        this.height = 20;
         // tail radius
         this.radius = 13;
         this.colour = 'yellow';
@@ -108,18 +107,13 @@ class TailSegment {
 
     update(index) {
         // gets index for specific tail segment
-        const historyIndex = positionHistory.length -1 -index * 6;
+        const historyIndex = positionHistory.length -1 -index * 3;
 
         if (historyIndex >= 0) {
             this.position.x = positionHistory[historyIndex].x;
             this.position.y = positionHistory[historyIndex].y;
         }
 
-        if (index === 0 || index === tail.length -1) {
-            this.drawTailEnds();
-        } else {
-            this.drawTailCenter();
-        }
     }
 }
 
@@ -194,19 +188,19 @@ const map = [
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
     ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', ' ', '#'],
-    ['#', ' ', '.', ' ', ' ', ' ', ' ', ' ', '.', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', '.', ' ', ' ', ' ', ' ', '.', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', '.', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', '.', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
 ]
 
@@ -424,17 +418,10 @@ function animate() {
         }
     })
 
-    //draw tail segments
-    tail.forEach((TailSegment, index) => {
-        if (index === 0 || index === tail.length -1) {
-            TailSegment.drawTailEnds();
-        } else {
-            TailSegment.drawTailCenter();
-        }
-    })
 
-    // draw and update player on canvas
+// update player on canvas
     player.update();
+
 
 // updates tail position based on last player position when player is moving
 if (player.velocity.x !==0 || player.velocity.y !==0) {
@@ -450,12 +437,26 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         positionHistory.shift();
 
     }
-    // draw and update player tail
+    
+}
+
+ // update player tail
     tail.forEach((TailSegment, index) => {
         TailSegment.update(index);
     })
-    
-}
+
+
+     // draw tail segments on canvas
+    tail.forEach((TailSegment, index) => {
+        if (index === 0 || index === tail.length -1) {
+            TailSegment.drawTailEnds();
+        } else {
+            TailSegment.drawTailCenter();
+        }
+    })
+
+    // draw player head on canvas
+    player.draw();
 
     // velocity is set to zero at start of movement loop so player can stop if no button is pressed
     player.velocity.x = 0
@@ -474,8 +475,7 @@ boundaries.forEach((Boundary) => {
     Boundary.draw();
 })
 
-// draw and update player on canvas
-player.update();
+
 
 
 

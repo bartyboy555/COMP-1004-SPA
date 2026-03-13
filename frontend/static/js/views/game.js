@@ -68,31 +68,61 @@ class TailSegment {
         // tail with and height
         this.width = 20;
         this.height = 20;
-        // tail radius
+        // tail and corner radius
         this.radius = 13;
+        this.cornerRadius = 12;
         this.colour = 'yellow';
     }
 
     
-    drawTailCenter() {
+    drawTailCenter(index) {
+
+        // checking if current tail segment is a corner of tail
+
+        // storing previous and next tail segment
+        const prevTailSeg = tail[index - 1];
+        const nextTailSeg = tail[index + 1];
+
+        let turning = false;
+
+        if (prevTailSeg && nextTailSeg) {
+
+            // calculating diferent in positions
+            const diffX1 = prevTailSeg.position.x - this.position.x;
+            const diffY1 = prevTailSeg.position.y - this.position.y;
+
+            const diffX2 = nextTailSeg.position.x - this.position.x;
+            const diffY2 = nextTailSeg.position.y - this.position.y
+
+            // current tail segment is corner if there is a difference in positions with previous and next segments
+            // if so turning = true
+            turning = (diffX1 !== diffX2 && diffY1 !== diffY2);
+        }
+
         canvasContext.beginPath();
             // draw middle of tail as a rectangle
             canvasContext.rect(
-                this.position.x - this.width / 2,
-                this.position.y - this.height / 2,
+                this.position.x- this.width / 2,
+                this.position.y- this.height / 2,
                 this.width,
                 this.height
             )
             
         canvasContext.fillStyle = this.colour;
         canvasContext.fill()
+
         canvasContext.closePath();
+
+        // if the current tail segment is a corner draw a circle instead
+        if (turning) {
+            this.drawCornerCircle();
+            // console.log("circles are being drawn")
+        }
     }
 
     drawTailEnds() {
         canvasContext.beginPath();
         // draw start and end of tail as rounded rectangles
-        // make start and end of tail a rounded rectangle
         canvasContext.roundRect(
             this.position.x - this.width / 2,
             this.position.y - this.height / 2,
@@ -103,6 +133,25 @@ class TailSegment {
         canvasContext.fillStyle = this.colour;
         canvasContext.fill();
         canvasContext.closePath();
+    }
+
+    // function to draw cirles for corners of tail
+    drawCornerCircle() {
+
+        canvasContext.beginPath();
+
+        canvasContext.arc(
+            this.position.x,
+            this.position.y,
+            this.cornerRadius,
+            0,
+            Math.PI * 2
+        );
+
+        canvasContext.fillStyle = this.colour;
+        canvasContext.fill();
+        canvasContext.closePath();
+
     }
 
     update(index) {
@@ -138,7 +187,7 @@ class Pellet {
 
     
 }
-console.log("running 3")
+
 
 // creating new instances for game
 const pellets = [];
@@ -448,10 +497,13 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
      // draw tail segments on canvas
     tail.forEach((TailSegment, index) => {
+        // if tail segment is at the start of end of array
         if (index === 0 || index === tail.length -1) {
+        // draw as a rounded rectangle
             TailSegment.drawTailEnds();
         } else {
-            TailSegment.drawTailCenter();
+        // draw as a rectangle
+            TailSegment.drawTailCenter(index);
         }
     })
 

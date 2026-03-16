@@ -1,4 +1,4 @@
-import { loadView } from "./views/load_view.js";
+import { loadView } from "./load_view.js";
 
 const navigateTo = url => {
     history.pushState(null, null, url);

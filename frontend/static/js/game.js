@@ -1,3 +1,5 @@
+//console.log("game.js is loaded");
+
 // html canvas variables
 const canvas = document.querySelector('canvas');
 const canvasContext = canvas.getContext('2d');
@@ -582,3 +584,4 @@ addEventListener('keyup', ({ key }) => {
 
     //console.log(player.velocity);
 })
+

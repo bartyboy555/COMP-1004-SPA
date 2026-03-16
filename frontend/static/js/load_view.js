@@ -3,7 +3,7 @@ export async function loadView(view) {
     const app = document.querySelector("#app");
 
     // load html for view
-    const response = await fetch(`static/js/views/${view}.html`);
+    const response = await fetch(`/static/views/${view}.html`);
 
     if (!response.ok) {
         app.innerHTML = "<h1>ERROR 404 Page not found.</h1>";
@@ -13,7 +13,7 @@ export async function loadView(view) {
 
     // load page specific javascript
    try {
-    const jscheck = await fetch(`/static/js/views/${view}.js`, {
+    const jscheck = await fetch(`/static/js/${view}.js`, {
         method: "HEAD"
     });
 
@@ -21,10 +21,12 @@ export async function loadView(view) {
 
     // check if there is a js file before loading
     if (jscheck.ok && contentType?.includes("javascript")) {
-        const module = await import(`/static/js/views/${view}.js`);
+        const module = await import(`/static/js/${view}.js`);
         module.default?.();
     }
    } catch {
-    // if no js file do nothing
+    // if no js file is found
+    console.log("no js is found")
    }
 }
+

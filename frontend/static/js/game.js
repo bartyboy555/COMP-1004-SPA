@@ -212,6 +212,7 @@ const positionHistory = [];
 
 
 
+
 const keys = {
     w: {
         pressed: false
@@ -293,7 +294,7 @@ map.forEach((row, i) => {
 })
 
 // function circle and rectangle colision
-function circleColidesWithRectangle( {
+function circleColidesWithWallrectangle( {
     circle,
     rectangle
 }) {
@@ -318,16 +319,35 @@ function animate() {
     requestAnimationFrame(animate);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
 
-    // if statements for player movement based on wasd
+    // variable for first sections of tail for boundary checks to ignore
+    const safeSegments = 10;
 
+    // if statements for player movement based on wasd
     if (keys.w.pressed && lastkey == 'w') {
+
+    
+    // if player head collides with tail segment
+    // ignores first couple tail segments as they are always touching tail
+    for (let i = safeSegments; i < tail.length; i++) {
+        const segment = tail[i];
+
+        // collision detection for player head touching tail
+        const distance = Math.hypot(
+            player.position.x - segment.position.x,
+            player.position.y - segment.position.y
+        );
+        if (
+            distance < player.radius + segment.radius) {
+                console.log("player hit tail")
+            }
+    }
     // and if any boundary is colided with
     // loop for each boundary
     for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithRectangle({
+            circleColidesWithWallrectangle({
             circle: {...player, velocity: {
                 x: 0,
                 y: -player.speed
@@ -345,11 +365,26 @@ function animate() {
         }
     }
     } else if (keys.a.pressed && lastkey == 'a') {
+
+        for (let i = safeSegments; i < tail.length; i++) {
+            const segment = tail[i];
+    
+            // collision detection for player head touching tail
+            const distance = Math.hypot(
+                player.position.x - segment.position.x,
+                player.position.y - segment.position.y
+            );
+            if (
+                distance < player.radius + segment.radius) {
+                    console.log("player hit tail")
+                }
+        }
+
         for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithRectangle({
+            circleColidesWithWallrectangle({
             circle: {...player, velocity: {
                 x: -player.speed,
                 y: 0
@@ -367,11 +402,26 @@ function animate() {
         }
     }
     } else if (keys.s.pressed && lastkey == 's') {
+
+        for (let i = safeSegments; i < tail.length; i++) {
+            const segment = tail[i];
+    
+            // collision detection for player head touching tail
+            const distance = Math.hypot(
+                player.position.x - segment.position.x,
+                player.position.y - segment.position.y
+            );
+            if (
+                distance < player.radius + segment.radius) {
+                    console.log("player hit tail")
+                }
+        }
+
         for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithRectangle({
+            circleColidesWithWallrectangle({
             circle: {...player, velocity: {
                 x: 0,
                 y: player.speed
@@ -389,11 +439,27 @@ function animate() {
         }
     }
     } else if (keys.d.pressed && lastkey == 'd') {
+
+        for (let i = safeSegments; i < tail.length; i++) {
+            const segment = tail[i];
+    
+            // collision detection for player head touching tail
+            const distance = Math.hypot(
+                player.position.x - segment.position.x,
+                player.position.y - segment.position.y
+            );
+            if (
+                distance < player.radius + segment.radius) {
+                    console.log("player hit tail")
+                }
+        }
+
+
         for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithRectangle({
+            circleColidesWithWallrectangle({
             circle: {...player, velocity: {
                 x: player.speed,
                 y: 0
@@ -457,7 +523,7 @@ function animate() {
 
         // if statment to check if player is coliding with boundaries
         if (
-            circleColidesWithRectangle({
+            circleColidesWithWallrectangle({
                 circle: player,
                 rectangle: boundary
             })

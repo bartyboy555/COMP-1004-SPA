@@ -3,9 +3,46 @@ h1 {
 }
 
 body {
-    background-color: black;
+    background-color: #101010;
+    padding-top: 30px;
 }
 
 p {
     color: white
 }
+
+a {
+    color: inherit;
+
+}
+
+nav {
+    list-style-type: none;
+    margin: 0;
+    padding: 10px;
+    overflow: hidden;
+
+    background-color: blue;
+
+    position: fixed;
+    top: 0;
+   
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+
+    width: 100%
+}
+w
+nav a {
+    color: black;
+    text-align: center;
+    text-decoration: none;
+
+    padding: 14px 16px;
+}
+
+nav a:hover {
+    background-color: darkblue;
+}
+

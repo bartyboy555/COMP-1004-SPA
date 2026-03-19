@@ -7,8 +7,8 @@ const canvasContext = canvas.getContext('2d');
 const scoreElement = document.querySelector('#scoreElement');
 
 // setting canvas dimensions
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = 450;
+canvas.height = 700;
 
 // Boundary class
 class Boundary {
@@ -604,6 +604,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
     else if (game === false) {
         // draw game over screen
+        canvasContext.clearRect(0,0, canvas.width, canvas.height);
         canvasContext.font = "50px arial";
         canvasContext.fillstyle = "yellow";
         canvasContext.fillText("Game Over!",10,80);

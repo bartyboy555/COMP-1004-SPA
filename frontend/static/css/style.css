@@ -46,8 +46,9 @@ nav a:hover {
     background-color: yellow;
 }
 
-canvas {
-    display: block;
-    margin: 0 auto;
+.app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 

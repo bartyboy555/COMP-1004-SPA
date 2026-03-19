@@ -191,9 +191,13 @@ class Pellet {
 }
 
 
-// creating new instances for game
+// creating new instances and variables for game
+// boolean to keep game running
+let game = true;
+// pellet and boundary position arrays
 const pellets = [];
 const boundaries = [];
+// player instance from class
 const player  = new Player({
     position: {
         x: Boundary.width + Boundary.width / 2,
@@ -314,8 +318,10 @@ function circleColidesWithWallrectangle( {
             rectangle.position.x + rectangle.width)
 }
 
+
 // starts game loop in animation function so it is constantly running till we tell it to stop
 function animate() {
+    if (game === true) {
     requestAnimationFrame(animate);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -339,6 +345,9 @@ function animate() {
         if (
             distance < player.radius + segment.radius) {
                 console.log("player hit tail")
+                // stop game when player hits tail
+                game = false;
+                break;
             }
     }
     // and if any boundary is colided with
@@ -377,6 +386,8 @@ function animate() {
             if (
                 distance < player.radius + segment.radius) {
                     console.log("player hit tail")
+                    game = false;
+                    break;
                 }
         }
 
@@ -414,6 +425,8 @@ function animate() {
             if (
                 distance < player.radius + segment.radius) {
                     console.log("player hit tail")
+                    game = false;
+                    break;
                 }
         }
 
@@ -451,6 +464,8 @@ function animate() {
             if (
                 distance < player.radius + segment.radius) {
                     console.log("player hit tail")
+                    game = false;
+                    break;
                 }
         }
 
@@ -585,7 +600,18 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
     //console.log(tail);
     //console.log(positionHistory);
 
+    }
+
+    else if (game === false) {
+        // draw game over screen
+        canvasContext.font = "50px arial";
+        canvasContext.fillstyle = "yellow";
+        canvasContext.fillText("Game Over!",10,80);
+    }
+
+
 }
+
 
 animate();
 
@@ -594,6 +620,8 @@ animate();
 boundaries.forEach((Boundary) => {
     Boundary.draw();
 })
+
+
 
 
 

@@ -1,5 +1,9 @@
 //console.log("game.js is loaded");
 
+// hiding rety button
+var button = document.getElementById("retryButton")
+button.style.display = "none";
+
 // html canvas variables
 const canvas = document.querySelector('canvas');
 const canvasContext = canvas.getContext('2d');
@@ -242,21 +246,21 @@ let score = 0;
 // 2d array setting map spaces
 const map = [
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', '.', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', '.', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
-    ['#', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '#'],
+    ['#', ' ', '.', '.', '.', '.', '.', '.', '.', ' ', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+    ['#', '.', ' ', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', ' ', '.', '.', '.', '.', '.', '.', '.', ' ', '#'],
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
 ]
 
@@ -319,8 +323,13 @@ function circleColidesWithWallrectangle( {
 }
 
 
+
+
+let gameOverReason = " ";
+
 // starts game loop in animation function so it is constantly running till we tell it to stop
 function animate() {
+
     if (game === true) {
     requestAnimationFrame(animate);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
@@ -347,6 +356,7 @@ function animate() {
                 console.log("player hit tail")
                 // stop game when player hits tail
                 game = false;
+                gameOverReason = "You hit your own Tail!";
                 break;
             }
     }
@@ -387,6 +397,7 @@ function animate() {
                 distance < player.radius + segment.radius) {
                     console.log("player hit tail")
                     game = false;
+                    gameOverReason = "You hit your own Tail!";
                     break;
                 }
         }
@@ -426,6 +437,7 @@ function animate() {
                 distance < player.radius + segment.radius) {
                     console.log("player hit tail")
                     game = false;
+                    gameOverReason = "You hit your own Tail!";
                     break;
                 }
         }
@@ -465,6 +477,7 @@ function animate() {
                 distance < player.radius + segment.radius) {
                     console.log("player hit tail")
                     game = false;
+                    gameOverReason = "You hit your own Tail!";
                     break;
                 }
         }
@@ -602,12 +615,34 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
     }
 
+    // if game ends
     else if (game === false) {
+
+        // change canvas dimesions to make room for html elements
+        canvas.height = 150;
+
         // draw game over screen
+
+        // clearing canvas
         canvasContext.clearRect(0,0, canvas.width, canvas.height);
+        // text settings
         canvasContext.font = "50px arial";
-        canvasContext.fillstyle = "yellow";
-        canvasContext.fillText("Game Over!",10,80);
+        canvasContext.fillStyle = "yellow";
+        canvasContext.textAlign = "center";
+        // canvasContext.textBaseline = "top";
+        // drawing text
+        canvasContext.fillText("Game Over!", canvas.width / 2, 50);
+
+
+        canvasContext.fillStyle = "white";
+        canvasContext.font = "20px arial";
+
+        // drawing next line
+        canvasContext.fillText(gameOverReason, canvas.width / 2, 90);
+
+        // reveal retry button
+        button.style.display = "block";
+
     }
 
 

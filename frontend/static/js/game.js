@@ -44,7 +44,7 @@ class Player {
         // player radius
         this.radius = 15;
         // player speed
-        this.speed = 3;
+        this.speed = 2;
     }
 
     // drawing circle to look like pacman
@@ -254,7 +254,7 @@ const map = [
     ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
     ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
     ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
-    ['#', '.', ' ', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
     ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
     ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
     ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
@@ -340,27 +340,6 @@ function animate() {
     // if statements for player movement based on wasd
     if (keys.w.pressed && lastkey == 'w') {
 
-    
-    // if player head collides with tail segment
-    // ignores first couple tail segments as they are always touching tail
-    for (let i = safeSegments; i < tail.length; i++) {
-        const segment = tail[i];
-
-        // collision detection for player head touching tail
-        const distance = Math.hypot(
-            player.position.x - segment.position.x,
-            player.position.y - segment.position.y
-        );
-        if (
-            distance < player.radius + segment.radius) {
-                console.log("player hit tail")
-                // stop game when player hits tail
-                game = false;
-                gameOverReason = "You hit your own Tail!";
-                break;
-            }
-    }
-    // and if any boundary is colided with
     // loop for each boundary
     for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
@@ -385,23 +364,7 @@ function animate() {
     }
     } else if (keys.a.pressed && lastkey == 'a') {
 
-        for (let i = safeSegments; i < tail.length; i++) {
-            const segment = tail[i];
-    
-            // collision detection for player head touching tail
-            const distance = Math.hypot(
-                player.position.x - segment.position.x,
-                player.position.y - segment.position.y
-            );
-            if (
-                distance < player.radius + segment.radius) {
-                    console.log("player hit tail")
-                    game = false;
-                    gameOverReason = "You hit your own Tail!";
-                    break;
-                }
-        }
-
+        
         for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
         if (
@@ -424,23 +387,6 @@ function animate() {
         }
     }
     } else if (keys.s.pressed && lastkey == 's') {
-
-        for (let i = safeSegments; i < tail.length; i++) {
-            const segment = tail[i];
-    
-            // collision detection for player head touching tail
-            const distance = Math.hypot(
-                player.position.x - segment.position.x,
-                player.position.y - segment.position.y
-            );
-            if (
-                distance < player.radius + segment.radius) {
-                    console.log("player hit tail")
-                    game = false;
-                    gameOverReason = "You hit your own Tail!";
-                    break;
-                }
-        }
 
         for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
@@ -465,24 +411,6 @@ function animate() {
     }
     } else if (keys.d.pressed && lastkey == 'd') {
 
-        for (let i = safeSegments; i < tail.length; i++) {
-            const segment = tail[i];
-    
-            // collision detection for player head touching tail
-            const distance = Math.hypot(
-                player.position.x - segment.position.x,
-                player.position.y - segment.position.y
-            );
-            if (
-                distance < player.radius + segment.radius) {
-                    console.log("player hit tail")
-                    game = false;
-                    gameOverReason = "You hit your own Tail!";
-                    break;
-                }
-        }
-
-
         for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
         if (
@@ -504,6 +432,45 @@ function animate() {
             player.velocity.x = player.speed
         }
     }
+    }
+
+     // loop for each boundary
+    boundaries.forEach((boundary) => {
+        // draw boundaries
+        boundary.draw();
+
+        // if statment to check if player is coliding with boundaries
+        if (
+            circleColidesWithWallrectangle({
+                circle: player,
+                rectangle: boundary
+            })
+        ) {
+            //console.log("we are coliding!")
+            // stops player moving if colided with boundary
+            player.velocity.x = 0;
+            player.velocity.y = 0;
+        }
+    })
+
+
+    // if player head collides with tail segment
+    // ignores first couple tail segments as they are always touching tail
+    for (let i = safeSegments; i < tail.length; i++) {
+        const segment = tail[i];
+
+        // collision detection for player head touching tail
+        const distance = Math.hypot(
+            player.position.x - segment.position.x,
+            player.position.y - segment.position.y
+        );
+        if (
+            distance < player.radius + segment.radius) {
+                console.log("player hit tail")
+                // stop game when player hits tail
+                game = false;
+                gameOverReason = "You hit your own Tail!";
+            }
     }
 
     // loop through each of the pellets in the array
@@ -544,24 +511,6 @@ function animate() {
     }
     }
 
-    // loop for each boundary
-    boundaries.forEach((boundary) => {
-        // draw boundaries
-        boundary.draw();
-
-        // if statment to check if player is coliding with boundaries
-        if (
-            circleColidesWithWallrectangle({
-                circle: player,
-                rectangle: boundary
-            })
-        ) {
-            //console.log("we are coliding!")
-            // stops player moving if colided with boundary
-            player.velocity.x = 0;
-            player.velocity.y = 0;
-        }
-    })
 
 
 // update player on canvas
@@ -605,10 +554,6 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
     // draw player head on canvas
     player.draw();
-
-    // velocity is set to zero at start of movement loop so player can stop if no button is pressed
-    player.velocity.x = 0
-    player.velocity.y = 0;
 
     //console.log(tail);
     //console.log(positionHistory);

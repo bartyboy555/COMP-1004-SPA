@@ -334,9 +334,6 @@ function animate() {
     requestAnimationFrame(animate);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
 
-    // variable for first sections of tail for boundary checks to ignore
-    const safeSegments = 10;
-
     // if statements for player movement based on wasd
     if (keys.w.pressed && lastkey == 'w') {
 
@@ -453,25 +450,25 @@ function animate() {
         }
     })
 
+    if (tail.length > 10) {
+    // if player head collides with tail end
+        const tailEnd = tail[tail.length - 1];
 
-    // if player head collides with tail segment
-    // ignores first couple tail segments as they are always touching tail
-    for (let i = safeSegments; i < tail.length; i++) {
-        const segment = tail[i];
-
-        // collision detection for player head touching tail
+        // collision detection for player head touching tail end
         const distance = Math.hypot(
-            player.position.x - segment.position.x,
-            player.position.y - segment.position.y
+            player.position.x - tailEnd.position.x,
+            player.position.y - tailEnd.position.y
         );
+
         if (
-            distance < player.radius + segment.radius) {
-                console.log("player hit tail")
-                // stop game when player hits tail
+            distance < player.radius + tailEnd.radius) {
+                //console.log("player hit tail")
+                // stop game when player hits tail end
                 game = false;
-                gameOverReason = "You hit your own Tail!";
+                gameOverReason = "You tried to eat your own Tail!";
             }
-    }
+        }
+
 
     // loop through each of the pellets in the array
     // in order to not update pellets that haven't been removed

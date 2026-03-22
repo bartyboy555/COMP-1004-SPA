@@ -44,7 +44,7 @@ class Player {
         // player radius
         this.radius = 15;
         // player speed
-        this.speed = 2;
+        this.speed = 3;
     }
 
     // drawing circle to look like pacman
@@ -327,11 +327,42 @@ function circleColidesWithWallrectangle( {
 
 let gameOverReason = " ";
 
+// variable for calculating monitor frames per second
+let frames = 0;
+
+// gets elapsed time since page loaded in ms
+let msPrev = window.performance.now();
+// console.log(msNow);
+
+// fps and ms limit for html canvas
+// prevents player going to quick as it limits the amount of pixels per second they move
+const fps = 60;
+const msPerFrame = 1000 / fps ;
+
 // starts game loop in animation function so it is constantly running till we tell it to stop
 function animate() {
 
+    // if game is true continue to render game
     if (game === true) {
     requestAnimationFrame(animate);
+
+    // calculating difference in time since page load and first frame of canvas
+    const msNow = window.performance.now()
+    const msPassed = msNow - msPrev;
+
+    if (msPassed < msPerFrame) return;
+    
+    // get the remainder of msPassed
+    const excessTime = msPassed % msPerFrame;
+
+    // make previous time current time
+    // only called when msPassed is greater than 16.67ms
+    msPrev = msNow - excessTime;
+
+    // increase frame variable
+    frames++
+    
+    // clear canvas
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
 
     // if statements for player movement based on wasd
@@ -495,7 +526,7 @@ function animate() {
         pellets.splice(i, 1);
 
         // creates a new tail segment when player eats pellet
-        // stores new instance of tail segemnt in array
+        // stores new instance of tail segement in array
         tail.push(
             new TailSegment({
                 position: {
@@ -592,6 +623,12 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
 
 animate();
+
+// log frames variable per second to console
+// displays frames counted per second
+setInterval(() => {
+    console.log(frames)
+}, 1000);
 
 
 // loop to draw boundaries

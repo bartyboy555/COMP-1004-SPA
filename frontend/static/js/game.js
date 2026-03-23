@@ -632,7 +632,17 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
     ghosts.forEach((ghost) => {
 
-        // ghost collision prediction
+    if (Math.hypot(
+            ghost.position.x - player.position.x,
+            ghost.position.y - player.position.y
+        ) <
+        ghost.radius + player.radius
+    ) {
+        game = false;
+        gameOverReason = "A ghost ate you!!"
+    }
+
+        // ghost collision prediction with boundaries
         const ghostCollisions = [];
         boundaries.forEach((boundary) => {
             if (

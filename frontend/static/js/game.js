@@ -44,7 +44,7 @@ class Player {
         // player radius
         this.radius = 15;
         // player speed
-        this.speed = 2;
+        this.speed = 5;
     }
 
     // drawing circle to look like pacman
@@ -175,7 +175,7 @@ class TailSegment {
 // ghost class
 class Ghost {
     static speed = 2;
-    constructor({ position, velocity }) {
+    constructor({ position, velocity, color = 'red' }) {
         this.position = position;
         this.velocity = velocity;
         // ghost radius
@@ -184,6 +184,8 @@ class Ghost {
         this.speed = 2;
         // array to store previous collisions
         this.prevCollisions = []
+        this.color = color
+        this.scared = false
     }
 
     // drawing ghost
@@ -192,7 +194,8 @@ class Ghost {
         // circle arc
         canvasContext.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
         // ghost colour
-        canvasContext.fillStyle = 'red';
+        // if ghost is scared make blue otherwise default colour
+        canvasContext.fillStyle = this.scared ? 'blue': this.color;
         canvasContext.fill()
         canvasContext.closePath();
     }
@@ -229,13 +232,36 @@ class Pellet {
     
 }
 
+// powerup class
+class PowerUp {
+    constructor({ position }) {
+        this.position = position;
+        // pellet radius
+        this.radius = 10;
+    }
+
+    // drawing pellet 
+    draw() {
+        canvasContext.beginPath();
+        // circle arc
+        canvasContext.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        // pellet colour
+        canvasContext.fillStyle = 'purple';
+        canvasContext.fill()
+        canvasContext.closePath();
+    }
+
+    
+}
+
 
 // creating new instances and variables for game
 // boolean to keep game running
 let game = true;
-// pellet and boundary position arrays
+// position arrays
 const pellets = [];
 const boundaries = [];
+const powerUps = [];
 // player instance from class
 const player  = new Player({
     position: {
@@ -264,6 +290,18 @@ const ghosts = [
             x: Ghost.speed,
             y: 0
         }
+    }),
+
+    new Ghost({
+        position: {
+            x: Boundary.width * 6 + Boundary.width / 2,
+            y: Boundary.width * 3 + Boundary.width / 2
+        },
+        velocity: {
+            x: Ghost.speed,
+            y: 0
+        },
+        color: 'pink'
     })
 ]
 
@@ -309,7 +347,7 @@ const map = [
     ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
     ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
     ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
-    ['#', ' ', '.', '.', '.', '.', '.', '.', '.', ' ', '#'],
+    ['#', ' ', '.', '.', '.', '.', '.', '.', '.', 'P', '#'],
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
 ]
 
@@ -337,6 +375,19 @@ map.forEach((row, i) => {
                 // store in pellets array
                 pellets.push(
                     new Pellet({
+                        position: {
+                            // set position with the width/height divided by 2 so asset is in center of box when drawn
+                            x: Boundary.width * j + Boundary.width / 2,
+                            y: Boundary.height * i + Boundary.height / 2
+                        }
+                    })
+                )
+                break
+
+            case 'P':
+                // store in powerUps array
+                powerUps.push(
+                    new PowerUp({
                         position: {
                             // set position with the width/height divided by 2 so asset is in center of box when drawn
                             x: Boundary.width * j + Boundary.width / 2,
@@ -550,6 +601,54 @@ function animate() {
             }
         }
 
+    
+    // powerup conditions
+    for (let i = powerUps.length - 1; 0 <= i; i--) {
+    const powerUp = powerUps[i]
+     // draw powerups 
+    powerUp.draw()
+
+    // collision detection with player
+    // if player collides with powerup
+        if (Math.hypot(
+            powerUp.position.x - player.position.x,
+            powerUp.position.y - player.position.y
+        ) <
+        powerUp.radius + player.radius
+    ) {
+        // remove power up
+        powerUps.splice(i, 1)
+
+        // make ghosts scared
+        ghosts.forEach(ghost => {
+            ghost.scared = true
+            console.log(ghost.scared)
+
+            setTimeout(() => {
+                ghost.scared = false
+                console.log(ghost.scared)
+            // ghosts scared for 5 seconds
+            }, 5000)
+        })
+    }
+}
+
+
+ghosts.forEach((ghost) => {
+
+    // ghost player collsion detection
+    if (Math.hypot(
+            ghost.position.x - player.position.x,
+            ghost.position.y - player.position.y
+        ) <
+        // game doesnt end if ghost is scared
+        ghost.radius + player.radius && !ghost.scared
+    ) {
+        // if ghost touch player head end game
+        game = false;
+        gameOverReason = "A ghost ate you!!"
+    }
+
 
     // loop through each of the pellets in the array
     // in order to not update pellets that haven't been removed
@@ -574,6 +673,8 @@ function animate() {
         scoreElement.innerHTML = score;
         // remove pellet
         pellets.splice(i, 1);
+    
+    
 
         // creates a new tail segment when player eats pellet
         // stores new instance of tail segement in array
@@ -587,7 +688,9 @@ function animate() {
         )
 
     }
+
     }
+
 
 
 
@@ -630,17 +733,6 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         }
     })
 
-    ghosts.forEach((ghost) => {
-
-    if (Math.hypot(
-            ghost.position.x - player.position.x,
-            ghost.position.y - player.position.y
-        ) <
-        ghost.radius + player.radius
-    ) {
-        game = false;
-        gameOverReason = "A ghost ate you!!"
-    }
 
         // ghost collision prediction with boundaries
         const ghostCollisions = [];
@@ -767,12 +859,13 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
         // reset collisions when direction has been picked
         ghost.prevCollisions = []
-    }
+        }
         
         ghost.update();
     })
 
 
+    
 
 
     // draw player head on canvas

@@ -634,21 +634,6 @@ function animate() {
 }
 
 
-ghosts.forEach((ghost) => {
-
-    // ghost player collsion detection
-    if (Math.hypot(
-            ghost.position.x - player.position.x,
-            ghost.position.y - player.position.y
-        ) <
-        // game doesnt end if ghost is scared
-        ghost.radius + player.radius && !ghost.scared
-    ) {
-        // if ghost touch player head end game
-        game = false;
-        gameOverReason = "A ghost ate you!!"
-    }
-
 
     // loop through each of the pellets in the array
     // in order to not update pellets that haven't been removed
@@ -732,6 +717,29 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
             TailSegment.drawTailCenter(index);
         }
     })
+
+
+    for (let i = ghosts.length - 1; 0 <= i; i--) {
+        const ghost = ghosts[i];
+
+    // ghost player collsion detection
+    if (Math.hypot(
+            ghost.position.x - player.position.x,
+            ghost.position.y - player.position.y
+        ) <
+        // game doesnt end if ghost is scared
+        ghost.radius + player.radius 
+    ) {
+        // remove ghost if scared and player collides
+        if (ghost.scared) {
+            ghosts.splice(i, 1);
+        } else {
+        // else ghost touch player head end game
+        game = false;
+        gameOverReason = "A ghost ate you!!"
+    }
+}
+
 
 
         // ghost collision prediction with boundaries
@@ -862,10 +870,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         }
         
         ghost.update();
-    })
-
-
-    
+    }
 
 
     // draw player head on canvas

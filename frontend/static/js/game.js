@@ -172,6 +172,40 @@ class TailSegment {
     }
 }
 
+// ghost class
+class Ghost {
+    constructor({ position, velocity }) {
+        this.position = position;
+        this.velocity = velocity;
+        // ghost radius
+        this.radius = 15;
+        // ghost speed
+        this.speed = 5;
+        // array to store previous collisions
+        this.preCollisions = []
+    }
+
+    // drawing ghost
+    draw() {
+        canvasContext.beginPath();
+        // circle arc
+        canvasContext.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        // ghost colour
+        canvasContext.fillStyle = 'red';
+        canvasContext.fill()
+        canvasContext.closePath();
+    }
+
+    // update ghost position
+    update() {
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+    }
+
+    
+}
+
+
 // pellet class
 class Pellet {
     constructor({ position }) {
@@ -180,12 +214,12 @@ class Pellet {
         this.radius = 8;
     }
 
-    // drawing circle to look like pacman
+    // drawing pellet 
     draw() {
         canvasContext.beginPath();
         // circle arc
         canvasContext.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-        // player colour
+        // pellet colour
         canvasContext.fillStyle = 'white';
         canvasContext.fill()
         canvasContext.closePath();
@@ -217,6 +251,20 @@ const player  = new Player({
 const tail = [];
 // array to store player positon history
 const positionHistory = [];
+
+// ghost array
+const ghosts = [
+    new Ghost({
+        position: {
+            x: Boundary.width * 6 + Boundary.width / 2,
+            y: Boundary.width + Boundary.width / 2
+        },
+        velocity: {
+            x: 5,
+            y: 0
+        }
+    })
+]
 
 
 
@@ -302,7 +350,7 @@ map.forEach((row, i) => {
 })
 
 // function circle and rectangle colision
-function circleColidesWithWallrectangle( {
+function circleColidesWithRectangle( {
     circle,
     rectangle
 }) {
@@ -373,7 +421,7 @@ function animate() {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithWallrectangle({
+            circleColidesWithRectangle({
             circle: {...player, velocity: {
                 x: 0,
                 y: -player.speed
@@ -397,7 +445,7 @@ function animate() {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithWallrectangle({
+            circleColidesWithRectangle({
             circle: {...player, velocity: {
                 x: -player.speed,
                 y: 0
@@ -420,7 +468,7 @@ function animate() {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithWallrectangle({
+            circleColidesWithRectangle({
             circle: {...player, velocity: {
                 x: 0,
                 y: player.speed
@@ -443,7 +491,7 @@ function animate() {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithWallrectangle({
+            circleColidesWithRectangle({
             circle: {...player, velocity: {
                 x: player.speed,
                 y: 0
@@ -469,7 +517,7 @@ function animate() {
 
         // if statment to check if player is coliding with boundaries
         if (
-            circleColidesWithWallrectangle({
+            circleColidesWithRectangle({
                 circle: player,
                 rectangle: boundary
             })
@@ -580,8 +628,100 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         }
     })
 
+    ghosts.forEach((ghost) => {
+
+        // ghost collision prediction
+        const ghostCollisions = [];
+        boundaries.forEach((boundary) => {
+            if (
+                !ghostCollisions.includes('right') &&
+                circleColidesWithRectangle({
+                    circle: {
+                        ...ghost,
+                        velocity: {
+                            x: ghost.speed,
+                            y: 0
+                        }
+                    },
+                    rectangle: boundary
+                })
+            ) {
+                ghostCollisions.push('right');
+            }
+
+            if (
+                !ghostCollisions.includes('left') &&
+                circleColidesWithRectangle({
+                    circle: {
+                        ...ghost,
+                        velocity: {
+                            x: -ghost.speed,
+                            y: 0
+                        }
+                    },
+                    rectangle: boundary
+                })
+            ) {
+                ghostCollisions.push('left');
+            }
+
+            if (
+                !ghostCollisions.includes('up') &&
+                circleColidesWithRectangle({
+                    circle: {
+                        ...ghost,
+                        velocity: {
+                            x: 0,
+                            y: -ghost.speed
+                        }
+                    },
+                    rectangle: boundary
+                })
+            ) {
+                ghostCollisions.push('up');
+            }
+
+            if (
+                !ghostCollisions.includes('down') &&
+                circleColidesWithRectangle({
+                    circle: {
+                        ...ghost,
+                        velocity: {
+                            x: 0,
+                            y: ghost.speed
+                        }
+                    },
+                    rectangle: boundary
+                })
+            ) {
+                ghostCollisions.push('down');
+            }
+        })
+
+        // update prevCollisions array if ghostCollisions has been updated
+        if ( ghostCollisions.length > ghost.preCollisions.length ) { 
+        ghost.preCollisions = ghostCollisions;
+        }
+
+        if ( JSON.stringify(ghostCollisions) != JSON.stringify(ghost.preCollisions) ) {
+            //console.log("test")
+        }
+        console.log(ghostCollisions);
+        console.log(ghost.preCollisions);
+        ghost.update();
+    })
+
+
+
+
     // draw player head on canvas
     player.draw();
+
+    ghosts.forEach((ghost) =>  {
+        ghost.draw();
+    })
+
+
 
     //console.log(tail);
     //console.log(positionHistory);
@@ -626,9 +766,9 @@ animate();
 
 // log frames variable per second to console
 // displays frames counted per second
-setInterval(() => {
-    console.log(frames)
-}, 1000);
+//setInterval(() => {
+//    console.log(frames)
+//}, 1000);
 
 
 // loop to draw boundaries

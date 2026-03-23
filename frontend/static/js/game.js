@@ -44,7 +44,7 @@ class Player {
         // player radius
         this.radius = 15;
         // player speed
-        this.speed = 3;
+        this.speed = 2;
     }
 
     // drawing circle to look like pacman
@@ -174,15 +174,16 @@ class TailSegment {
 
 // ghost class
 class Ghost {
+    static speed = 2;
     constructor({ position, velocity }) {
         this.position = position;
         this.velocity = velocity;
         // ghost radius
         this.radius = 15;
         // ghost speed
-        this.speed = 5;
+        this.speed = 2;
         // array to store previous collisions
-        this.preCollisions = []
+        this.prevCollisions = []
     }
 
     // drawing ghost
@@ -260,7 +261,7 @@ const ghosts = [
             y: Boundary.width + Boundary.width / 2
         },
         velocity: {
-            x: 5,
+            x: Ghost.speed,
             y: 0
         }
     })
@@ -355,19 +356,20 @@ function circleColidesWithRectangle( {
     rectangle
 }) {
     // used in if statements for boundary checks
-    // player velocity is also added to stop the player just before they hit a boundary so they dont get stuck
+    // velocity is also added to stop the object just before they hit a boundary so they dont get stuck
+    const padding = Boundary.width / 2 - circle.radius - 1;
     return (circle.position.y - circle.radius + circle.velocity.y
             <=
-            rectangle.position.y + rectangle.height && 
+            rectangle.position.y + rectangle.height + padding && 
             circle.position.x + circle.radius + circle.velocity.x
             >= 
-            rectangle.position.x && 
+            rectangle.position.x - padding && 
             circle.position.y + circle.radius + circle.velocity.y
             >= 
-            rectangle.position.y && 
+            rectangle.position.y - padding && 
             circle.position.x - circle.radius + circle.velocity.x
             <= 
-            rectangle.position.x + rectangle.width)
+            rectangle.position.x + rectangle.width + padding)
 }
 
 
@@ -699,15 +701,64 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         })
 
         // update prevCollisions array if ghostCollisions has been updated
-        if ( ghostCollisions.length > ghost.preCollisions.length ) { 
-        ghost.preCollisions = ghostCollisions;
+        if ( ghostCollisions.length > ghost.prevCollisions.length ) { 
+        ghost.prevCollisions = ghostCollisions;
         }
 
-        if ( JSON.stringify(ghostCollisions) != JSON.stringify(ghost.preCollisions) ) {
+        // finding pathways ghost can take
+        if ( JSON.stringify(ghostCollisions) != JSON.stringify(ghost.prevCollisions) ) {
             //console.log("test")
-        }
+        
+        if (ghost.velocity.x > 0) 
+            ghost.prevCollisions.push('right');
+        else if (ghost.velocity.x < 0) 
+            ghost.prevCollisions.push('left');
+        else if (ghost.velocity.y < 0)
+            ghost.prevCollisions.push('up');
+        else if (ghost.velocity.y > 0)
+            ghost.prevCollisions.push('down');
+
+
         console.log(ghostCollisions);
-        console.log(ghost.preCollisions);
+        console.log(ghost.prevCollisions);
+
+        // get possible ghost pathways based on difference between previous collisions and current collisions
+        const pathways = ghost.prevCollisions.filter(collision => {
+            return !ghostCollisions.includes(collision);
+        })
+        // print possible pathways
+        console.log({ pathways })
+
+        // pick random direction
+        const direction = pathways[Math.floor(Math.random() * pathways.length)]
+
+        // print ghost chosen direction
+        console.log({ direction });
+
+        // move ghost in direction picked
+        switch (direction) {
+            case 'down' :
+                ghost.velocity.y = ghost.speed
+                ghost.velocity.x = 0
+                break
+            case 'up' :
+                ghost.velocity.y = -ghost.speed
+                ghost.velocity.x = 0
+                break
+            case 'right' :
+                ghost.velocity.y = 0
+                ghost.velocity.x = ghost.speed
+                break
+            case 'left' :
+                ghost.velocity.y = 0
+                ghost.velocity.x = -ghost.speed
+                break
+        }
+
+        // reset collisions when direction has been picked
+        ghost.prevCollisions = []
+    }
+        
         ghost.update();
     })
 

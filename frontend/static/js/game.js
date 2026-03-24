@@ -48,7 +48,7 @@ class Player {
         this.openRate = 0.12
         this.rotation = 0
         // player speed
-        this.speed = 5;
+        this.speed = 2;
     }
 
     // drawing circle to look like pacman
@@ -177,7 +177,7 @@ class TailSegment {
 
     update(index) {
         // gets index for specific tail segment
-        const historyIndex = positionHistory.length -1 -index * 3;
+        const historyIndex = positionHistory.length -1 -(index + 2) * 3;
 
         if (historyIndex >= 0) {
             this.position.x = positionHistory[historyIndex].x;
@@ -707,7 +707,7 @@ function animate() {
 // updates tail position based on last player position when player is moving
 if (player.velocity.x !==0 || player.velocity.y !==0) {
 
-        // stores players last position in array
+    // stores players last position in array
     positionHistory.push({
         x: player.position.x,
         y: player.position.y
@@ -850,15 +850,15 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
             ghost.prevCollisions.push('down');
 
 
-        console.log(ghostCollisions);
-        console.log(ghost.prevCollisions);
+        // console.log(ghostCollisions);
+        // console.log(ghost.prevCollisions);
 
         // get possible ghost pathways based on difference between previous collisions and current collisions
         const pathways = ghost.prevCollisions.filter(collision => {
             return !ghostCollisions.includes(collision);
         })
         // print possible pathways
-        console.log({ pathways })
+        // console.log({ pathways })
 
         // pick random direction
         const direction = pathways[Math.floor(Math.random() * pathways.length)]

@@ -43,24 +43,39 @@ class Player {
         this.velocity = velocity;
         // player radius
         this.radius = 15;
+        // player chomp animation variables
+        this.radians = 0.75
+        this.openRate = 0.12
+        this.rotation = 0
         // player speed
         this.speed = 5;
     }
 
     // drawing circle to look like pacman
     draw() {
+        canvasContext.save();
+        canvasContext.translate(this.position.x, this.position.y)
+        canvasContext.rotate(this.rotation)
+        canvasContext.translate(-this.position.x, -this.position.y)
         canvasContext.beginPath();
         // circle arc
-        canvasContext.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        canvasContext.arc(this.position.x, this.position.y, this.radius, this.radians, Math.PI * 2 - this.radians);
+        canvasContext.lineTo(this.position.x, this.position.y)
         // player colour
         canvasContext.fillStyle = 'yellow';
         canvasContext.fill()
         canvasContext.closePath();
+        canvasContext.restore();
     }
 
     update() {
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
+
+        if (this.radians < 0 || this.radians > .75)
+            this.openRate = -this.openRate
+
+        this.radians += this.openRate
     }
 
     
@@ -562,6 +577,12 @@ function animate() {
         }
     }
     }
+
+    // if statements for player rotation
+    if (player.velocity.x > 0) player.rotation = 0
+    else if (player.velocity.x < 0) player.rotation = Math.PI
+    else if (player.velocity.y > 0) player.rotation = Math.PI / 2
+    else if (player.velocity.y < 0) player.rotation = Math.PI * 1.5
 
      // loop for each boundary
     boundaries.forEach((boundary) => {

@@ -416,12 +416,12 @@ map.forEach((row, i) => {
     })
 })
 
-// function circle and rectangle colision
-function circleColidesWithRectangle( {
+// function circle and rectangle colision prediction
+function circleRectCollisionPrediction( {
     circle,
     rectangle
 }) {
-    // used in if statements for boundary checks
+    // used in if statements for predictive boundary checks
     // velocity is also added to stop the object just before they hit a boundary so they dont get stuck
     const padding = Boundary.width / 2 - circle.radius - 1;
     return (circle.position.y - circle.radius + circle.velocity.y
@@ -438,7 +438,19 @@ function circleColidesWithRectangle( {
             rectangle.position.x + rectangle.width + padding)
 }
 
+// function for cicle and rectangle colision detection
+function circleRectCollisionDetection( {
+    circle,
+    rectangle
+}) {
+    const closestX = Math.max(rectangle.position.x, (Math.min(circle.position.x,  rectangle.position.x + rectangle.width)));
+    const closestY = Math.max(rectangle.position.y, (Math.min(circle.position.y, rectangle.position.y + rectangle.height)))
 
+    const dx = circle.position.x - closestX;
+    const dy = circle.position.y - closestY;
+
+    return (dx * dx + dy * dy) <= (circle.radius * circle.radius);
+}
 
 
 let gameOverReason = " ";
@@ -489,7 +501,7 @@ function animate() {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithRectangle({
+            circleRectCollisionPrediction({
             circle: {...player, velocity: {
                 x: 0,
                 y: -player.speed
@@ -513,7 +525,7 @@ function animate() {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithRectangle({
+            circleRectCollisionPrediction({
             circle: {...player, velocity: {
                 x: -player.speed,
                 y: 0
@@ -536,7 +548,7 @@ function animate() {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithRectangle({
+            circleRectCollisionPrediction({
             circle: {...player, velocity: {
                 x: 0,
                 y: player.speed
@@ -559,7 +571,7 @@ function animate() {
         const boundary = boundaries[i];
         if (
             // circle collision detection function
-            circleColidesWithRectangle({
+            circleRectCollisionPrediction({
             circle: {...player, velocity: {
                 x: player.speed,
                 y: 0
@@ -589,9 +601,9 @@ function animate() {
         // draw boundaries
         boundary.draw();
 
-        // if statment to check if player is coliding with boundaries
+        // if statment to check if player will colide with boundaries
         if (
-            circleColidesWithRectangle({
+            circleRectCollisionPrediction({
                 circle: player,
                 rectangle: boundary
             })
@@ -620,6 +632,25 @@ function animate() {
                 game = false;
                 gameOverReason = "You tried to eat your own Tail!";
             }
+
+        // loop for checking if any of the ghosts are colliding with the player tail
+        // checks each ghost and tail segment
+        for (let i = tail.length - 1; 0<= i; i--) {
+            const tailSeg = tail[i];
+            // console.log(tailSeg);
+            for (let g = ghosts.length - 1; 0<= g; g--) {
+            const ghost = ghosts[g]
+            // console.log(ghost);
+                if (circleRectCollisionDetection({
+                    circle: ghost,
+                    rectangle: tailSeg
+                })) {
+                    // console.log("ghost collided with tail section")
+                    
+                }
+        }
+        }
+
         }
 
     
@@ -643,7 +674,7 @@ function animate() {
         // make ghosts scared
         ghosts.forEach(ghost => {
             ghost.scared = true
-            console.log(ghost.scared)
+            // console.log(ghost.scared)
 
             setTimeout(() => {
                 ghost.scared = false
@@ -768,7 +799,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         boundaries.forEach((boundary) => {
             if (
                 !ghostCollisions.includes('right') &&
-                circleColidesWithRectangle({
+                circleRectCollisionPrediction({
                     circle: {
                         ...ghost,
                         velocity: {
@@ -784,7 +815,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
             if (
                 !ghostCollisions.includes('left') &&
-                circleColidesWithRectangle({
+                circleRectCollisionPrediction({
                     circle: {
                         ...ghost,
                         velocity: {
@@ -800,7 +831,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
             if (
                 !ghostCollisions.includes('up') &&
-                circleColidesWithRectangle({
+                circleRectCollisionPrediction({
                     circle: {
                         ...ghost,
                         velocity: {
@@ -816,7 +847,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
             if (
                 !ghostCollisions.includes('down') &&
-                circleColidesWithRectangle({
+                circleRectCollisionPrediction({
                     circle: {
                         ...ghost,
                         velocity: {
@@ -864,7 +895,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         const direction = pathways[Math.floor(Math.random() * pathways.length)]
 
         // print ghost chosen direction
-        console.log({ direction });
+        // console.log({ direction });
 
         // move ghost in direction picked
         switch (direction) {

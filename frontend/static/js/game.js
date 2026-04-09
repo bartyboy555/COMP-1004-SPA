@@ -645,8 +645,15 @@ function animate() {
                     circle: ghost,
                     rectangle: tailSeg
                 })) {
+                    // if ghost collides with tail cut off tail from their and remove score
                     // console.log("ghost collided with tail section")
-                    
+                    let removedTailAmount = tail.length - i;
+                    // remove tail sections from array
+                    tail.splice(i, removedTailAmount);
+                    // subtract score
+                    score = score - removedTailAmount;
+                    scoreElement.innerHTML = score;
+                    removedTailAmount = 0;
                 }
         }
         }

@@ -249,6 +249,8 @@ class Pellet {
 
 // powerup class
 class PowerUp {
+    // amount of power ups spawned on map
+    static amount = 3;
     constructor({ position }) {
         this.position = position;
         // pellet radius
@@ -348,7 +350,7 @@ let score = 0;
 // 2d array setting map spaces
 const map = [
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
-    ['#', ' ', '.', '.', '.', '.', '.', '.', '.', ' ', '#'],
+    ['#', ' ', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
     ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
     ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
     ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
@@ -362,9 +364,33 @@ const map = [
     ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
     ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
     ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
-    ['#', ' ', '.', '.', '.', '.', '.', '.', '.', 'P', '#'],
+    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
 ]
+
+// function for getting random map numbers for random placement of items
+function getRandomInt(maxNum) {
+    return Math.floor(Math.random() * maxNum);
+}
+// console.log(PowerUp.amount);
+
+// spawns powerups in a random place
+for (let i = 0; i < PowerUp.amount; i++) {
+    let colNum = 0;
+    let rowNum = 0;
+
+    do {
+        // gets random positions on map
+        colNum = getRandomInt(11);
+        rowNum = getRandomInt(17);
+        // while its a boundary or where the player spawns
+    } while (map[rowNum][colNum] === '#' || (rowNum === 1 && colNum === 1) );
+
+    // sets position as powerup
+    map[rowNum][colNum] = 'P';
+
+}
+
 
 // loop for 2d map array to set map assests in canvas
 map.forEach((row, i) => {

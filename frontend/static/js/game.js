@@ -196,7 +196,7 @@ class TailSegment {
 class Ghost {
     static speed = 2;
     static amount = 2;
-    constructor({ position, velocity, color = 'red' }) {
+    constructor({ position, velocity}) {
         this.position = position;
         this.velocity = velocity;
         // ghost radius
@@ -206,7 +206,8 @@ class Ghost {
         // array to store previous collisions
         // starts with directions to pick from
         this.prevCollisions = ['up','down','left','right']
-        this.color = color
+        this.colors = ['red', 'pink', 'orange'];
+        this.color = this.colors[getRandomInt(this.colors.length)]
         this.scared = false
     }
 
@@ -304,7 +305,7 @@ const tail = [];
 const positionHistory = [];
 
 // ghost array
-const ghosts = []
+const ghosts = [];
 
 
 
@@ -364,8 +365,8 @@ for (let i = 0; i < PowerUp.amount; i++) {
 
     do {
         // gets random positions on map
-        colNum = getRandomInt(11);
-        rowNum = getRandomInt(17);
+        colNum = getRandomInt(map[0].length);
+        rowNum = getRandomInt(map.length);
         // while its a boundary or where the player spawns
     } while (map[rowNum][colNum] === '#' || (rowNum === 1 && colNum === 1) );
 
@@ -374,11 +375,12 @@ for (let i = 0; i < PowerUp.amount; i++) {
 
 }
 
+// spawns ghosts in random place
 for (let i = 0; i < Ghost.amount; i++) {
 
     do {
-        colNum = getRandomInt(11);
-        rowNum = getRandomInt(17);
+        colNum = getRandomInt(map[0].length);
+        rowNum = getRandomInt(map.length);
     } while (map[rowNum][colNum] === '#' || (rowNum === 1 && colNum === 1) );
 
     map[rowNum][colNum] = 'G';
@@ -432,6 +434,7 @@ map.forEach((row, i) => {
                 break
 
             case "G":
+                // pick random colour for ghost
                 ghosts.push(
                 new Ghost({
                     position: {
@@ -441,7 +444,7 @@ map.forEach((row, i) => {
                     velocity: {
                         x: 0,
                         y: 0
-                    },
+                    }
                 })
             )
             break;
@@ -904,7 +907,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
         // update prevCollisions array if ghostCollisions has been updated
         if ( ghostCollisions.length > ghost.prevCollisions.length ) { 
-        ghost.prevCollisions = ghostCollisions;
+        ghost.prevCollisions = [...ghostCollisions];
         }
 
         // finding pathways ghost can take

@@ -14,6 +14,11 @@ const scoreElement = document.querySelector('#scoreElement');
 canvas.width = 450;
 canvas.height = 700;
 
+// function for getting random map numbers for random placement
+function getRandomInt(maxNum) {
+    return Math.floor(Math.random() * maxNum);
+}
+
 // Boundary class
 class Boundary {
     // static variable in class to be used in other places
@@ -190,6 +195,7 @@ class TailSegment {
 // ghost class
 class Ghost {
     static speed = 2;
+    static amount = 2;
     constructor({ position, velocity, color = 'red' }) {
         this.position = position;
         this.velocity = velocity;
@@ -198,7 +204,8 @@ class Ghost {
         // ghost speed
         this.speed = 2;
         // array to store previous collisions
-        this.prevCollisions = []
+        // starts with directions to pick from
+        this.prevCollisions = ['up','down','left','right']
         this.color = color
         this.scared = false
     }
@@ -297,30 +304,8 @@ const tail = [];
 const positionHistory = [];
 
 // ghost array
-const ghosts = [
-    new Ghost({
-        position: {
-            x: Boundary.width * 6 + Boundary.width / 2,
-            y: Boundary.width + Boundary.width / 2
-        },
-        velocity: {
-            x: Ghost.speed,
-            y: 0
-        }
-    }),
+const ghosts = []
 
-    new Ghost({
-        position: {
-            x: Boundary.width * 6 + Boundary.width / 2,
-            y: Boundary.width * 3 + Boundary.width / 2
-        },
-        velocity: {
-            x: Ghost.speed,
-            y: 0
-        },
-        color: 'pink'
-    })
-]
 
 
 
@@ -357,7 +342,7 @@ const map = [
     ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
     ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
     ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+    ['#', '.', '#', '#', '.', 'G', '.', '#', '#', '.', '#'],
     ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
     ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
     ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
@@ -368,16 +353,14 @@ const map = [
     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
 ]
 
-// function for getting random map numbers for random placement of items
-function getRandomInt(maxNum) {
-    return Math.floor(Math.random() * maxNum);
-}
+
 // console.log(PowerUp.amount);
+
+let colNum = 0;
+let rowNum = 0;
 
 // spawns powerups in a random place
 for (let i = 0; i < PowerUp.amount; i++) {
-    let colNum = 0;
-    let rowNum = 0;
 
     do {
         // gets random positions on map
@@ -389,6 +372,16 @@ for (let i = 0; i < PowerUp.amount; i++) {
     // sets position as powerup
     map[rowNum][colNum] = 'P';
 
+}
+
+for (let i = 0; i < Ghost.amount; i++) {
+
+    do {
+        colNum = getRandomInt(11);
+        rowNum = getRandomInt(17);
+    } while (map[rowNum][colNum] === '#' || (rowNum === 1 && colNum === 1) );
+
+    map[rowNum][colNum] = 'G';
 }
 
 
@@ -438,6 +431,20 @@ map.forEach((row, i) => {
                 )
                 break
 
+            case "G":
+                ghosts.push(
+                new Ghost({
+                    position: {
+                        x: Boundary.width * j + Boundary.width / 2,
+                        y: Boundary.height * i + Boundary.height / 2
+                    },
+                    velocity: {
+                        x: 0,
+                        y: 0
+                    },
+                })
+            )
+            break;
         }
     })
 })

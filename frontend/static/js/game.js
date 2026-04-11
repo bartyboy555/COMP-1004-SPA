@@ -14,6 +14,32 @@ const scoreElement = document.querySelector('#scoreElement');
 canvas.width = 450;
 canvas.height = 700;
 
+
+let colNum = 0;
+let rowNum = 0;
+
+// 2d array setting map spaces
+const map = [
+    ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
+    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
+    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
+    ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
+]
+
+
 // function for getting random map numbers for random placement
 function getRandomInt(maxNum) {
     return Math.floor(Math.random() * maxNum);
@@ -195,7 +221,7 @@ class TailSegment {
 // ghost class
 class Ghost {
     static speed = 2;
-    static amount = 2;
+    static amount = 1;
     constructor({ position, velocity}) {
         this.position = position;
         this.velocity = velocity;
@@ -206,6 +232,7 @@ class Ghost {
         // array to store previous collisions
         // starts with directions to pick from
         this.prevCollisions = ['up','down','left','right']
+        // ghosts have randomly picked colors
         this.colors = ['red', 'pink', 'orange'];
         this.color = this.colors[getRandomInt(this.colors.length)]
         this.scared = false
@@ -229,7 +256,18 @@ class Ghost {
         this.position.y += this.velocity.y;
     }
 
-    
+    static randomPlacing() {
+    // spawns ghosts in random place
+    for (let i = 0; i < Ghost.amount; i++) {
+
+    do {
+        colNum = getRandomInt(map[0].length);
+        rowNum = getRandomInt(map.length);
+    } while (map[rowNum][colNum] === '#' || (rowNum === 1 && colNum === 1) );
+
+    map[rowNum][colNum] = 'G';
+}
+    }
 }
 
 
@@ -276,13 +314,30 @@ class PowerUp {
         canvasContext.closePath();
     }
 
-    
+    static randomPlacing() {
+        // spawns powerups in a random place
+    for (let i = 0; i < PowerUp.amount; i++) {
+
+    do {
+        // gets random positions on map
+        colNum = getRandomInt(map[0].length);
+        rowNum = getRandomInt(map.length);
+        // while its a boundary or where the player spawns
+    } while (map[rowNum][colNum] === '#' || (rowNum === 1 && colNum === 1) );
+
+    // sets position as powerup
+    map[rowNum][colNum] = 'P';
+
+}
+    }
 }
 
 
 // creating new instances and variables for game
 // boolean to keep game running
 let game = true;
+let nextRound = false;
+let rounds = 0;
 // position arrays
 const pellets = [];
 const boundaries = [];
@@ -333,58 +388,11 @@ let lastkey = '';
 let score = 0;
 
 
-// 2d array setting map spaces
-const map = [
-    ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
-    ['#', ' ', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '#', '.', 'G', '.', '#', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '#', '.', '.', '.', '.', '#'],
-    ['#', '.', '#', '.', '#', '#', '#', '.', '#', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'],
-    ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
-]
-
-
-// console.log(PowerUp.amount);
-
-let colNum = 0;
-let rowNum = 0;
-
 // spawns powerups in a random place
-for (let i = 0; i < PowerUp.amount; i++) {
-
-    do {
-        // gets random positions on map
-        colNum = getRandomInt(map[0].length);
-        rowNum = getRandomInt(map.length);
-        // while its a boundary or where the player spawns
-    } while (map[rowNum][colNum] === '#' || (rowNum === 1 && colNum === 1) );
-
-    // sets position as powerup
-    map[rowNum][colNum] = 'P';
-
-}
+PowerUp.randomPlacing();
 
 // spawns ghosts in random place
-for (let i = 0; i < Ghost.amount; i++) {
-
-    do {
-        colNum = getRandomInt(map[0].length);
-        rowNum = getRandomInt(map.length);
-    } while (map[rowNum][colNum] === '#' || (rowNum === 1 && colNum === 1) );
-
-    map[rowNum][colNum] = 'G';
-}
+Ghost.randomPlacing();
 
 
 // loop for 2d map array to set map assests in canvas
@@ -711,6 +719,10 @@ function animate() {
         ) <
         powerUp.radius + player.radius
     ) {
+        // add to score
+        score += 5;
+        // update html element
+        scoreElement.innerHTML = score;
         // remove power up
         powerUps.splice(i, 1)
 
@@ -721,9 +733,9 @@ function animate() {
 
             setTimeout(() => {
                 ghost.scared = false
-                console.log(ghost.scared)
+                // console.log(ghost.scared)
             // ghosts scared for 5 seconds
-            }, 5000)
+            }, 10000)
         })
     }
 }
@@ -813,6 +825,11 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         }
     })
 
+    // if all pellets are collected
+    if (pellets.length === 0) {
+        // console.log("next round");
+        nextRound = true;
+    }
 
     for (let i = ghosts.length - 1; 0 <= i; i--) {
         const ghost = ghosts[i];
@@ -827,6 +844,10 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
     ) {
         // remove ghost if scared and player collides
         if (ghost.scared) {
+            // add to score
+            score += 10;
+            // update html element
+            scoreElement.innerHTML = score;
             ghosts.splice(i, 1);
         } else {
         // else ghost touch player head end game
@@ -982,6 +1003,96 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
     }
 
+    if (nextRound === true) {
+        // increase round count
+        rounds++;
+        console.log("new round")
+
+        // empty ghosts array from previous round
+        ghosts.splice(0, ghosts.length);
+        // removes previous powerups
+        powerUps.splice(0, powerUps.length);
+        // remove starting positions of previous ghosts and powerups
+        map.forEach((row, i) => {
+            row.forEach((symbol, j) => {
+                switch (symbol) {
+                    case 'G':
+                        map[i][j] = '.';
+                        break
+                    
+                    case 'P':
+                        map[i][j] = '.';
+                        break
+                }
+            })
+        })
+
+        if (rounds >= 3) {
+            powerUps.amount--;
+        } else if (rounds < 3) {
+            Ghost.amount++;
+        }
+
+        // spawns powerups in a random place
+        PowerUp.randomPlacing();
+
+        // spawns ghosts in random place
+        Ghost.randomPlacing();
+        
+        // place new items in next round
+        map.forEach((row, i) => {
+            row.forEach((symbol, j) => {
+                switch (symbol) {
+                    // pellet case
+                    // if position is a . in map set it to a pellet
+                    case '.':
+                        // store in pellets array
+                        pellets.push(
+                            new Pellet({
+                                position: {
+                                    // set position with the width/height divided by 2 so asset is in center of box when drawn
+                                    x: Boundary.width * j + Boundary.width / 2,
+                                    y: Boundary.height * i + Boundary.height / 2
+                                }
+                            })
+                        )
+                        break
+        
+                    case 'P':
+                        // store in powerUps array
+                        powerUps.push(
+                            new PowerUp({
+                                position: {
+                                    // set position with the width/height divided by 2 so asset is in center of box when drawn
+                                    x: Boundary.width * j + Boundary.width / 2,
+                                    y: Boundary.height * i + Boundary.height / 2
+                                }
+                            })
+                        )
+                        break
+        
+                    case "G":
+                        // pick random colour for ghost
+                        ghosts.push(
+                        new Ghost({
+                            position: {
+                                x: Boundary.width * j + Boundary.width / 2,
+                                y: Boundary.height * i + Boundary.height / 2
+                            },
+                            velocity: {
+                                x: 0,
+                                y: 0
+                            }
+                        })
+                    )
+                    break;
+                }
+            })
+        })
+
+        nextRound = false;
+    }
+
     // if game ends
     else if (game === false) {
 
@@ -1006,6 +1117,8 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
 
         // drawing next line
         canvasContext.fillText(gameOverReason, canvas.width / 2, 90);
+
+        canvasContext.fillText("Rounds complete: " + rounds, canvas.width / 2, 120)
 
         // reveal retry button
         button.style.display = "block";

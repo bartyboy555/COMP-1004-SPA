@@ -10,6 +10,8 @@ const canvasContext = canvas.getContext('2d');
 
 const scoreElement = document.querySelector('#scoreElement');
 
+const livesElement = document.querySelector('#livesElement');
+
 // setting canvas dimensions
 canvas.width = 450;
 canvas.height = 700;
@@ -69,6 +71,7 @@ class Boundary {
 
 // player class
 class Player {
+    static lives = 3;
     constructor({ position, velocity }) {
         this.position = position;
         this.velocity = velocity;
@@ -124,6 +127,7 @@ class TailSegment {
         this.radius = 13;
         this.cornerRadius = 12;
         this.colour = 'yellow';
+        this.endColour = 'orange';
     }
 
     
@@ -182,7 +186,7 @@ class TailSegment {
             this.height,
             this.height / 2
         )
-        canvasContext.fillStyle = this.colour;
+        canvasContext.fillStyle = this.endColour;
         canvasContext.fill();
         canvasContext.closePath();
     }
@@ -338,6 +342,7 @@ class PowerUp {
 let game = true;
 let nextRound = false;
 let rounds = 0;
+let playerImunity = false;
 // position arrays
 const pellets = [];
 const boundaries = [];
@@ -673,8 +678,18 @@ function animate() {
             distance < player.radius + tailEnd.radius) {
                 //console.log("player hit tail")
                 // stop game when player hits tail end
-                game = false;
+                if (Player.lives <= 0) {
+                game = false
                 gameOverReason = "You tried to eat your own Tail!";
+                } else if (playerImunity === false) {
+                    Player.lives--;
+                    livesElement.innerHTML = Player.lives;
+                    playerImunity = true;
+
+                    setTimeout(() => {
+                        playerImunity = false;
+                    }, 2000);
+                }
             }
 
         // loop for checking if any of the ghosts are colliding with the player tail
@@ -800,7 +815,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
     });
 
     // deletes oldest entry position in array when array gets too big
-    if (positionHistory.length > 300) {
+    if (positionHistory.length > 1000) {
         positionHistory.shift();
 
     }
@@ -849,10 +864,19 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
             // update html element
             scoreElement.innerHTML = score;
             ghosts.splice(i, 1);
-        } else {
-        // else ghost touch player head end game
+        } else if (Player.lives <= 0){
+        // else ghost touch player head lose player life
         game = false;
         gameOverReason = "A ghost ate you!!"
+        // if player has lives remove one and update lives element
+    } else if (playerImunity === false ){
+        Player.lives--;
+        livesElement.innerHTML = Player.lives;
+        playerImunity = true;
+
+        setTimeout(() => {
+            playerImunity = false;
+        }, 2000);
     }
 }
 

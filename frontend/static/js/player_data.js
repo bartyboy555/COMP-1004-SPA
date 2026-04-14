@@ -1,3 +1,4 @@
+export default function initPlayerData() {
 // fetching highscore from local storage
 var highscore = localStorage.getItem('highScore');
 
@@ -8,4 +9,6 @@ const highScoreDisplay = document.querySelector('#highScoreDisplay');
 
 if (highscore > 0) {
     highScoreDisplay.innerHTML = highscore;
+}
+
 }

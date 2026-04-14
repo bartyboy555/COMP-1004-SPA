@@ -1,3 +1,4 @@
+export default function initGame() {
 //console.log("game.js is loaded"); 
 
 // hiding rety button
@@ -15,6 +16,8 @@ const canvasContext = canvas.getContext('2d');
 const scoreElement = document.querySelector('#scoreElement');
 
 const livesElement = document.querySelector('#livesElement');
+
+
 
 // setting canvas dimensions
 canvas.width = 450;
@@ -395,7 +398,8 @@ const keys = {
 
 let lastkey = '';
 let score = 0;
-let highScore = 0;
+var highScore = localStorage.getItem('highScore');
+
 
 
 // spawns powerups in a random place
@@ -696,7 +700,7 @@ function animate() {
                     }, 2000);
                 }
             }
-
+        
         // loop for checking if any of the ghosts are colliding with the player tail
         // checks each ghost and tail segment
         for (let i = tail.length - 1; 0<= i; i--) {
@@ -704,6 +708,8 @@ function animate() {
             // console.log(tailSeg);
             for (let g = ghosts.length - 1; 0<= g; g--) {
             const ghost = ghosts[g]
+            // if ghosts are not scared don't cut off tail
+            if (!ghost.scared) {
             // console.log(ghost);
                 if (circleRectCollisionDetection({
                     circle: ghost,
@@ -720,6 +726,7 @@ function animate() {
                     removedTailAmount = 0;
                 }
         }
+    }
         }
 
         }
@@ -1156,7 +1163,7 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
             // reveal new highscore
             newHighscore.style.display = "block";
             localStorage.setItem('highScore', score);
-            highscore = score;
+            highScore = score;
         }
     }
 
@@ -1236,3 +1243,4 @@ addEventListener('keyup', ({ key }) => {
     //console.log(player.velocity);
 })
 
+}

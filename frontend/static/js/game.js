@@ -1,8 +1,12 @@
-//console.log("game.js is loaded");
+//console.log("game.js is loaded"); 
 
 // hiding rety button
 var button = document.getElementById("retryButton")
 button.style.display = "none";
+
+// hiding new highscore title
+var newHighscore = document.getElementById("newHighscore");
+newHighscore.style.display = "none";
 
 // html canvas variables
 const canvas = document.querySelector('canvas');
@@ -391,6 +395,7 @@ const keys = {
 
 let lastkey = '';
 let score = 0;
+let highScore = 0;
 
 
 // spawns powerups in a random place
@@ -1147,6 +1152,12 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         // reveal retry button
         button.style.display = "block";
 
+        if (highScore < score) {
+            // reveal new highscore
+            newHighscore.style.display = "block";
+            localStorage.setItem('highScore', score);
+            highscore = score;
+        }
     }
 
 

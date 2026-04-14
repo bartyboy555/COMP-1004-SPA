@@ -11,7 +11,7 @@ const router = async () => {
         { path: "/", view: "main_menu"},
         { path: "/startGame", view: "game"},
         { path: "/setDifficulty", view: "set_difficulty"},
-        { path: "/loadPlayerData", view: "load_player_data"},
+        { path: "/loadPlayerData", view: "player_data"},
         {path: "/gameDetails", view: "game_details"},
     ];
 

@@ -374,8 +374,10 @@ const positionHistory = [];
 // ghost array
 const ghosts = [];
 
-
-
+let score = 0;
+var highScore = localStorage.getItem('highScore');
+var totalPellets = parseInt(localStorage.getItem('totalPellets')) || 0;
+var totalGhostKills = parseInt(localStorage.getItem('totalGhostKills')) || 0;
 
 
 const keys = {
@@ -397,9 +399,6 @@ const keys = {
 }
 
 let lastkey = '';
-let score = 0;
-var highScore = localStorage.getItem('highScore');
-
 
 
 // spawns powerups in a random place
@@ -525,9 +524,10 @@ let msPrev = window.performance.now();
 const fps = 60;
 const msPerFrame = 1000 / fps ;
 
+let calculateStats = true;
+
 // starts game loop in animation function so it is constantly running till we tell it to stop
 function animate() {
-
     // if game is true continue to render game
     if (game === true) {
     requestAnimationFrame(animate);
@@ -761,8 +761,8 @@ function animate() {
             setTimeout(() => {
                 ghost.scared = false
                 // console.log(ghost.scared)
-            // ghosts scared for 5 seconds
-            }, 10000)
+            // ghosts scared for 8 seconds
+            }, 8000)
         })
     }
 }
@@ -792,6 +792,9 @@ function animate() {
         scoreElement.innerHTML = score;
         // remove pellet
         pellets.splice(i, 1);
+
+        // add to total pellets count
+        totalPellets++;
     
     
 
@@ -875,7 +878,10 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
             score += 10;
             // update html element
             scoreElement.innerHTML = score;
+            // remove ghost from array
             ghosts.splice(i, 1);
+            // increase total ghost kills
+            totalGhostKills++
         } else if (Player.lives <= 0){
         // else ghost touch player head lose player life
         game = false;
@@ -1159,18 +1165,36 @@ if (player.velocity.x !==0 || player.velocity.y !==0) {
         // reveal retry button
         button.style.display = "block";
 
+        if (calculateStats === true) {
+        calculateStats = false;
+        // time of game in ms
+        let gameTime = performance.now() -startTime;
+
+        let totalTime = parseInt(localStorage.getItem('totalTime')) || 0;
+
+        totalTime += gameTime;
+        
+        // storing variables in local storage
         if (highScore < score) {
             // reveal new highscore
             newHighscore.style.display = "block";
+            // store highscore in local storage
             localStorage.setItem('highScore', score);
             highScore = score;
+        }
+
+        localStorage.setItem('lastScore', score);
+        localStorage.setItem('totalPellets', totalPellets);
+        localStorage.setItem('totalGhostKills', totalGhostKills);
+        localStorage.setItem('totalTime', totalTime);
+        localStorage.setItem('lastGameTime', gameTime);
         }
     }
 
 
 }
 
-
+let startTime = performance.now();
 animate();
 
 // log frames variable per second to console

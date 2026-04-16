@@ -1,14 +1,25 @@
 h1 {
-    color: blue
+    color: yellow;
+    padding: 15px;
 }
 
 h2 {
-    color: white
+    color: blue;
+    padding: 25px;
+    font-size: medium;
+}
+
+h3 {
+    color: white;
+    font-size: small;
 }
 
 body {
     background-color: #101010;
     padding-top: 30px;
+    font-family: "Press Start 2P", system-ui;
+    font-weight: 400;
+    font-style: normal;
 }
 
 p {
@@ -21,33 +32,37 @@ a {
 }
 
 nav {
-    list-style-type: none;
     margin: 0;
-    padding: 10px;
-    overflow: hidden;
+    padding: 15px 0;
 
-    background-color: blue;
+    background: linear-gradient(to right, #0000ff, #1a1aff);
 
     position: fixed;
     top: 0;
-   
+    width: 100%;
+
     display: flex;
     justify-content: center;
-    gap: 40px;
-
-    width: 100%
+    align-items: center; 
+    gap: 50px;
 }
-w
-nav a {
-    color: black;
-    text-align: center;
-    text-decoration: none;
 
-    padding: 14px 16px;
+nav a {
+    color: white;            
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    transition: 0.25s;
 }
 
 nav a:hover {
-    background-color: yellow;
+    background-color: yellow;   
+    color: black;
+
+    display: inline-block;
+    padding: 8px 16px;
+
+    transition: 0.2s;
 }
 
 .app {

@@ -21,12 +21,12 @@
 1. Clone the repository
 git clone https://github.com/bartyboy555/COMP-1004-SPA.git
 2. Navigate into the project
-  cd COMP-1004-SPA
+  -  cd COMP-1004-SPA
 3. install node.js and express if you havent already
 4. run the webpage
-   in terminal run node server.js
-5.go to the local host url port 3000
-6.Enjoy!
+   -  in terminal run node server.js
+5. go to the local host url port 3000
+6. Enjoy!
 
 Just open index.html in your browser.
 

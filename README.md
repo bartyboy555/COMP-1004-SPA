@@ -9,13 +9,17 @@ Power-ups with unique effects
 Score tracking system
 Game loop with smooth animations
 Collision detection (walls & self)
+
 🛠️ Technologies Used
-JavaScript (Vanilla)
-HTML5 Canvas
-CSS
+-  JavaScript 
+-  HTML5 Canvas
+-  CSS
+-  Nodes.js
+-  Express.js
+
 🚀 Getting Started
 1. Clone the repository
-git clone https://github.com/your-username/snakman.git
+git clone https://github.com/bartyboy555/COMP-1004-SPA.git
 2. Navigate into the project
 cd snakman
 3. Run the game
@@ -24,31 +28,30 @@ Just open index.html in your browser.
 
 🎯 Controls
 Key	Action
-W / ↑	Move Up
-S / ↓	Move Down
-A / ←	Move Left
-D / →	Move Right
+W 	Move Up
+S 	Move Down
+A 	Move Left
+D 	Move Right
+
 📂 Project Structure
 snakman/
 │── index.html
 │── style.css
 │── game.js
 │── assets/
+
 🧠 Future Improvements
-Add levels or increasing difficulty
-Sound effects and music
-Mobile support (touch controls)
-High score saving (local storage)
+-  customization of website
+-  player data JSON save file download and upload
+-  tweaks and improvements never end!
+
 📸 Preview
 
 Add a screenshot or GIF here if you have one
 
-📄 License
-
-This project is open source and available under the MIT License.
-
 👤 Author
-Your Name
+Liam bartlett, first year software engineering university student at plymouth
+
 ⭐ Contributing
 
 Feel free to fork this project and submit pull requests for improvements!

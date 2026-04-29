@@ -1,23 +1,23 @@
-🐍 Snakman
+#🐍 Snakman
 
-A simple browser-based Snake-style game built with JavaScript, featuring dynamic gameplay, power-ups, and smooth animations.
+An arcade game that mixes the games Pacman and Snake for more complex gameplay in a SPA based website
 
-🎮 Features
-Classic snake movement mechanics
-Randomised food spawning
-Power-ups with unique effects
-Score tracking system
-Game loop with smooth animations
-Collision detection (walls & self)
+#🎮 Features
+-  Classic snake movement mechanics
+-  Randomised food spawning
+-  Power-ups to eat ghosts
+-  Score tracking system
+-  Game loop with smooth animations
+-  Collision detection 
 
-🛠️ Technologies Used
+#🛠️ Technologies Used
 -  JavaScript 
 -  HTML5 Canvas
 -  CSS
 -  Nodes.js
 -  Express.js
 
-🚀 Getting Started
+#🚀 Getting Started
 1. Clone the repository
 git clone https://github.com/bartyboy555/COMP-1004-SPA.git
 2. Navigate into the project
@@ -26,32 +26,30 @@ cd snakman
 
 Just open index.html in your browser.
 
-🎯 Controls
+#🎯 Controls
 Key	Action
 W 	Move Up
 S 	Move Down
 A 	Move Left
 D 	Move Right
 
-📂 Project Structure
-snakman/
-│── index.html
-│── style.css
-│── game.js
-│── assets/
+#📂 Project Structure
+<img width="382" height="586" alt="image" src="https://github.com/user-attachments/assets/86fa7269-53a9-4d08-ae74-3b8ec3eda11b" />
 
-🧠 Future Improvements
+
+#🧠 Future Improvements
 -  customization of website
 -  player data JSON save file download and upload
 -  tweaks and improvements never end!
 
-📸 Preview
+#📸 Preview
 
-Add a screenshot or GIF here if you have one
+<img width="1867" height="907" alt="image" src="https://github.com/user-attachments/assets/b7d45814-720e-4765-acaf-93a681daacb7" />
 
-👤 Author
+
+#👤 Author
 Liam bartlett, first year software engineering university student at plymouth
 
-⭐ Contributing
+#⭐ Contributing
 
 Feel free to fork this project and submit pull requests for improvements!

@@ -21,17 +21,21 @@
 1. Clone the repository
 git clone https://github.com/bartyboy555/COMP-1004-SPA.git
 2. Navigate into the project
-cd snakman
-3. Run the game
+  cd COMP-1004-SPA
+3. install node.js and express if you havent already
+4. run the webpage
+   in terminal run node server.js
+5.go to the local host url port 3000
+6.Enjoy!
 
 Just open index.html in your browser.
 
 # 🎯 Controls
 Key	Action
-W 	Move Up
-S 	Move Down
-A 	Move Left
-D 	Move Right
+-  W 	Move Up
+-  S 	Move Down
+-  A 	Move Left
+-  D 	Move Right
 
 # 📂 Project Structure
 <img width="382" height="586" alt="image" src="https://github.com/user-attachments/assets/86fa7269-53a9-4d08-ae74-3b8ec3eda11b" />
@@ -48,8 +52,8 @@ D 	Move Right
 
 
 # 👤 Author
-Liam bartlett, first year software engineering university student at plymouth
+### Liam bartlett, first year software engineering university student at plymouth
 
 # ⭐ Contributing
 
-Feel free to fork this project and submit pull requests for improvements!
+### Feel free to fork this project and submit pull requests for improvements!

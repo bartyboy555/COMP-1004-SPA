@@ -28,8 +28,6 @@ git clone https://github.com/bartyboy555/COMP-1004-SPA.git
 5. go to the local host url port 3000
 6. Enjoy!
 
-Just open index.html in your browser.
-
 # 🎯 Controls
 Key	Action
 -  W 	Move Up
